@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from core.models.skill import Skill
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class SkillRegistry:
     """Skill versioning and lookup registry.
 

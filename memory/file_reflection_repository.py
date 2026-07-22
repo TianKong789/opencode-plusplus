@@ -8,7 +8,7 @@ from core.interfaces.reflection_repository import ReflectionRepository
 from core.models.reflection import Reflection
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class FileReflectionRepository(ReflectionRepository):
     """File-backed reflection repository.
 

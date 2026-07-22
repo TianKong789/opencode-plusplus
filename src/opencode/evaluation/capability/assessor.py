@@ -1,6 +1,6 @@
 """Capability assessor implementation.
 
-Discovers and runs CapabilityTest instances to evaluate model capabilities.
+Assesses model capabilities using registered tests.
 """
 
 from __future__ import annotations
@@ -8,29 +8,20 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.capability_test import (
-    CapabilityTest,
-    Model,
-    get_all_tests,
-)
-from src.opencode.evaluation.capability.models import CapabilityScore
+from src.opencode.evaluation.capability.capability_test import CapabilityTest
+from src.opencode.evaluation.capability.models import CapabilityScore, Model
 
 
 @dataclass
 class CapabilityAssessor:
     """Assesses model capabilities by running registered tests.
 
-    Discovers CapabilityTest implementations and executes them
-    against models to produce CapabilityScore results.
+    Tests are injected via constructor or registered after init.
+    No auto-discovery — fully explicit for architectural purity.
     """
 
     _tests: dict[Capability, CapabilityTest] = field(default_factory=dict)
     _results: dict[str, list[CapabilityScore]] = field(default_factory=dict)
-
-    def __post_init__(self) -> None:
-        if not self._tests:
-            for test in get_all_tests():
-                self._tests[test.capability()] = test
 
     def register_test(self, test: CapabilityTest) -> None:
         """Register a capability test.

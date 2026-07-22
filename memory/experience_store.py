@@ -7,7 +7,7 @@ from core.models.experience import Experience
 from core.models.skill import Skill
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class ExperienceStore(MemoryProvider):
     """In-memory experience and skill store.
 

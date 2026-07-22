@@ -6,7 +6,7 @@ from core.interfaces.reflection_repository import ReflectionRepository
 from core.models.reflection import Reflection
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class InMemoryReflectionRepository(ReflectionRepository):
     """In-memory reflection repository.
 

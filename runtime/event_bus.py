@@ -9,7 +9,7 @@ from core.interfaces.event_bus import EventBus
 # NullEventBus canonical location: ``core.null_objects``.
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class SyncEventBus(EventBus):
     """Synchronous in-process event bus.
 

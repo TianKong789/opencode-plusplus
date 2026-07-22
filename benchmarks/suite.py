@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from core.models.benchmark import Benchmark
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class BenchmarkSuite:
     """Manages and runs collections of benchmarks.
 

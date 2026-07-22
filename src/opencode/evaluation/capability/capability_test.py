@@ -10,22 +10,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import CapabilityScore
-
-
-@dataclass(frozen=True)
-class Model:
-    """Minimal model representation for test execution.
-
-    Attributes:
-        model_id: Unique model identifier.
-        provider: The model provider.
-        api_endpoint: Optional API endpoint for inference.
-    """
-
-    model_id: str
-    provider: str
-    api_endpoint: str = ""
+from src.opencode.evaluation.capability.models import CapabilityScore, Model
 
 
 class CapabilityTest(ABC):

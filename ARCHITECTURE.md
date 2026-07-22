@@ -82,3 +82,39 @@ Phase 6  Evolution Lab
 
 Phase 7  Recursive Self-Improvement
 
+## Three-Layer Architecture
+
+The system is organized into three layers with strict unidirectional dependencies:
+
+```
+Runtime (ephemeral)  →  Knowledge (derived)  →  Assets (persistent, versioned)
+```
+
+### Dependency Matrix
+
+| Layer      | May depend on         | Must NOT depend on |
+|------------|----------------------|--------------------|
+| **Runtime**  | core/interfaces       | Knowledge, Assets  |
+| **Knowledge**| core/interfaces       | Runtime, Assets    |
+| **Assets**   | core/interfaces       | Runtime, Knowledge |
+
+**Rule:** All three layers depend only on `core/interfaces` (ports). No layer may import from another layer's implementation directory.
+
+| Layer | Components | Port Contracts |
+|-------|-----------|----------------|
+| **Runtime** | WorkflowRunner, ExecutionEngine, WorkspaceManager, GitManager, EventBus | workflow_runner, execution_engine, workspace_manager, git_manager, event_bus |
+| **Knowledge** | CapabilityAssessor, ModelRouter, Profiler, Evaluator, Reflector, SkillExtractor, PromptEvolver, SkillEvolver | capability_assessor, model_router, evaluator, reflector, skill_repository, reflection_repository |
+| **Assets** | AssetRepository, BenchmarkRunner, SkillRepository, ExperienceStore, ReflectionRepository | asset_repository, benchmark_runner, skill_repository, experience_store, reflection_repository |
+
+### Data Flow
+
+```
+Runtime produces       →  ExecutionResult, Evaluation
+Knowledge derives      →  Skills, Reflections, Capability Profiles, Evolved Prompts
+Assets persists        →  Skills, Experiences, Benchmarks, Prompts, Workflows
+```
+
+### Port Usage
+
+Each layer exposes interfaces in `core/interfaces/`. Implementations live in their respective layer directories. The DI container (`applications/container.py`) wires implementations to ports.
+

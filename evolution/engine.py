@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from benchmarks.metrics import MetricsTracker
 from benchmarks.suite import BenchmarkSuite
 from core.ids import EvaluationId, ExecutionId
 from core.models.evaluation import Evaluation, Verdict
+from core.models.experience import Experience
 from core.models.skill import Skill
 from evolution.loop import EvolutionLoop
 from evolution.prompt_evolver import PromptEvolver
@@ -29,6 +30,7 @@ class EvolutionEngine:
     metrics: MetricsTracker
     prompt_evolver: PromptEvolver | None = None
     skill_extractor: SkillExtractor | None = None
+    current_prompt: str = field(default="")
 
     # ── helpers ─────────────────────────────────────────────────────
 
@@ -41,6 +43,7 @@ class EvolutionEngine:
             metrics=self.metrics,
             prompt_evolver=self.prompt_evolver,
             skill_extractor=self.skill_extractor,
+            current_prompt=self.current_prompt,
         )
 
     # ── benchmarking ───────────────────────────────────────────────
@@ -103,7 +106,8 @@ class EvolutionEngine:
     ) -> tuple[tuple[Skill, ...], Evaluation, EvolutionEngine]:
         """Run one full generation: benchmark → evolve → record → evaluate.
 
-        Returns a new engine with the loop incremented.
+        Returns a new engine with the loop incremented and prompt evolved
+        (if prompt_evolver is available and current_prompt is set).
 
         Args:
             skills: The current skills to evolve.
@@ -130,8 +134,52 @@ class EvolutionEngine:
         )
         self.metrics.record(evaluation)
 
-        new_engine = self._with_loop(self.loop.record_iteration())
+        new_prompt = self.current_prompt
+        if self.prompt_evolver is not None and self.current_prompt:
+            new_prompt = self.prompt_evolver.mutate(
+                self.current_prompt, evaluation.summary,
+            )
+
+        new_engine = EvolutionEngine(
+            loop=self.loop.record_iteration(),
+            suite=self.suite,
+            evolver=self.evolver,
+            metrics=self.metrics,
+            prompt_evolver=self.prompt_evolver,
+            skill_extractor=self.skill_extractor,
+            current_prompt=new_prompt,
+        )
         return evolved, evaluation, new_engine
+
+    # ── skill extraction ──────────────────────────────────────────
+
+    def extract_skill(
+        self,
+        experiences: tuple[Experience, ...],
+        name: str,
+        description: str,
+    ) -> Skill:
+        """Extract a skill from experiences using the skill_extractor.
+
+        Delegates to the injected SkillExtractor. Raises if no extractor
+        was provided at construction time.
+
+        Args:
+            experiences: The experiences to extract from.
+            name: Name for the new skill.
+            description: Description of the skill.
+
+        Returns:
+            A new Skill with proficiency based on experience confidence.
+
+        Raises:
+            RuntimeError: If no skill_extractor was provided.
+        """
+        if self.skill_extractor is None:
+            raise RuntimeError(
+                "No SkillExtractor provided. Inject one at construction."
+            )
+        return self.skill_extractor.extract(experiences, name, description)
 
     def run_full_loop(
         self,

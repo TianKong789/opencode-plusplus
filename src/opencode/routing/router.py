@@ -13,8 +13,7 @@ from core.models.task import Task
 
 from src.opencode.evaluation.capability.assessor import CapabilityAssessor
 from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.capability_test import Model
-from src.opencode.evaluation.capability.models import ModelCapabilityProfile
+from src.opencode.evaluation.capability.models import Model, ModelCapabilityProfile
 from src.opencode.evaluation.capability.registry import ModelRegistry
 from src.opencode.routing.policies import BalancedPolicy, RoutingContext, RoutingPolicy
 

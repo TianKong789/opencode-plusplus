@@ -4,11 +4,10 @@ from src.opencode.evaluation.capability.assessor import CapabilityAssessor
 from src.opencode.evaluation.capability.capabilities import Capability
 from src.opencode.evaluation.capability.capability_test import (
     CapabilityTest,
-    Model,
     PythonCapabilityTest,
     SQLCapabilityTest,
 )
-from src.opencode.evaluation.capability.models import CapabilityScore
+from src.opencode.evaluation.capability.models import CapabilityScore, Model
 
 
 class CustomMathCapabilityTest(CapabilityTest):
@@ -34,19 +33,26 @@ class CustomMathCapabilityTest(CapabilityTest):
 
 
 class TestCapabilityAssessorRegistration:
-    def test_default_construction_discovers_all_default_tests(self) -> None:
+    def test_default_construction_has_no_tests(self) -> None:
         assessor = CapabilityAssessor()
 
-        assert len(assessor._tests) == 10
+        assert len(assessor._tests) == 0
+
+    def test_explicit_construction_injects_provided_tests(self) -> None:
+        tests = {Capability.PYTHON: PythonCapabilityTest(), Capability.SQL: SQLCapabilityTest()}
+        assessor = CapabilityAssessor(_tests=tests)
+
+        assert len(assessor._tests) == 2
         assert all(isinstance(test, CapabilityTest) for test in assessor._tests.values())
 
-    def test_list_capabilities_returns_ten_capability_members(self) -> None:
-        assessor = CapabilityAssessor()
+    def test_list_capabilities_returns_injected_capabilities(self) -> None:
+        tests = {Capability.PYTHON: PythonCapabilityTest(), Capability.SQL: SQLCapabilityTest()}
+        assessor = CapabilityAssessor(_tests=tests)
 
         capabilities = assessor.list_capabilities()
 
         assert isinstance(capabilities, tuple)
-        assert len(capabilities) == 10
+        assert len(capabilities) == 2
         assert all(isinstance(capability, Capability) for capability in capabilities)
 
     def test_register_test_adds_a_custom_test(self) -> None:
@@ -76,7 +82,7 @@ class TestCapabilityAssessorRegistration:
         assert assessor.get_test(Capability.PYTHON) is replacement_test
 
     def test_get_test_returns_matching_registered_test(self) -> None:
-        assessor = CapabilityAssessor()
+        assessor = CapabilityAssessor(_tests={Capability.PYTHON: PythonCapabilityTest()})
 
         assert isinstance(assessor.get_test(Capability.PYTHON), PythonCapabilityTest)
 

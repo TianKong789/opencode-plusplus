@@ -11,7 +11,7 @@ from core.models.execution import Execution
 from core.null_objects import NullEventBus
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class LLMEvaluator(Evaluator):
     """Evaluates execution results using heuristic scoring.
 

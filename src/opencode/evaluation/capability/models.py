@@ -11,6 +11,21 @@ from dataclasses import dataclass, field
 from src.opencode.evaluation.capability.capabilities import Capability
 
 
+@dataclass(frozen=True)
+class Model:
+    """Minimal model representation for capability assessment.
+
+    Attributes:
+        model_id: Unique model identifier.
+        provider: The model provider.
+        api_endpoint: Optional API endpoint for inference.
+    """
+
+    model_id: str
+    provider: str
+    api_endpoint: str = ""
+
+
 @dataclass(slots=True, frozen=True)
 class CapabilityScore:
     """A scored capability with evidence.

@@ -7,7 +7,7 @@ from core.interfaces.skill_repository import SkillRepository
 from core.models.skill import Skill
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class InMemorySkillRepository(SkillRepository):
     """In-memory skill repository.
 

@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from core.models.evaluation import Evaluation
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class MetricsTracker:
     """Tracks performance metrics over time.
 

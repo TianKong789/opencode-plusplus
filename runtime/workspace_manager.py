@@ -9,7 +9,7 @@ from core.interfaces.workspace_manager import WorkspaceManager
 from core.models.workspace import Workspace
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True)
 class LocalWorkspaceManager(WorkspaceManager):
     """Manages workspaces as local filesystem directories."""
 
