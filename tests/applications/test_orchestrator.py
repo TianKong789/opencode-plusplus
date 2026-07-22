@@ -147,8 +147,6 @@ def test_run_returns_reflection_and_emits_lifecycle_events() -> None:
     events: list[BaseEvent] = []
     event_bus.subscribe(TaskReceived, events.append)
     event_bus.subscribe(PlanGenerated, events.append)
-    event_bus.subscribe(WorkflowStarted, events.append)
-    event_bus.subscribe(WorkflowCompleted, events.append)
     event_bus.subscribe(EvaluationCompleted, events.append)
     event_bus.subscribe(ReflectionCompleted, events.append)
 
@@ -157,11 +155,10 @@ def test_run_returns_reflection_and_emits_lifecycle_events() -> None:
 
     assert isinstance(result, Reflection)
     assert result.id == "refl-1"
+    # WorkflowStarted/WorkflowCompleted are emitted by WorkflowRunner, not Orchestrator
     assert [type(event) for event in events] == [
         TaskReceived,
         PlanGenerated,
-        WorkflowStarted,
-        WorkflowCompleted,
         EvaluationCompleted,
         ReflectionCompleted,
     ]

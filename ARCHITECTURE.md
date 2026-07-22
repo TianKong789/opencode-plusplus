@@ -124,3 +124,4 @@ The following are exempt from the "depend only on core/interfaces" rule:
 
 - `core/ids.py`: Typed ID wrappers (WorkflowId, SkillId, etc.) are shared across all layers to prevent ID confusion.
 - `core/assets/`: Asset value types (Benchmark, Prompt, Skill, Template, Workflow) are shared domain types used by all layers.
+- `core/events/`: Domain event types (TaskReceived, WorkflowStarted, ExperienceStored, etc.) are shared across all layers for the event bus.

@@ -65,13 +65,13 @@ class Container(containers.DeclarativeContainer):
     reflector = providers.Singleton(ReflectorAgent)
     memory_provider = providers.Singleton(ExperienceStore)
     execution_engine = providers.Singleton(LocalExecutionEngine)
-    workflow_runner = providers.Singleton(LocalWorkflowRunner, engine=execution_engine)
+    workflow_runner = providers.Singleton(LocalWorkflowRunner, engine=execution_engine, event_bus=event_bus)
     workspace_manager = providers.Singleton(LocalWorkspaceManager)
     git_manager = providers.Singleton(LocalGitManager)
     experience_service = providers.Singleton(
         ExperienceCapture,
         memory=memory_provider,
-        event_bus=null_event_bus,
+        event_bus=event_bus,
     )
     orchestrator = providers.Singleton(
         Orchestrator,

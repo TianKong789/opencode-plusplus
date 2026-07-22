@@ -9,8 +9,6 @@ from core.events import (
     PlanGenerated,
     ReflectionCompleted,
     TaskReceived,
-    WorkflowCompleted,
-    WorkflowStarted,
 )
 from core.ids import WorkflowId, WorkflowStepId
 from core.interfaces.evaluator import Evaluator
@@ -70,22 +68,7 @@ class Orchestrator:
         self.git_manager.initialize_if_needed(workspace.root_path)
 
         workflow = self._plan_to_workflow(plan)
-        self.event_bus.publish(
-            WorkflowStarted(
-                source="orchestrator",
-                workflow_id=workflow.id,
-                step_count=workflow.step_count(),
-            )
-        )
         execution = self.workflow_runner.run(workflow, workspace)
-        self.event_bus.publish(
-            WorkflowCompleted(
-                source="orchestrator",
-                workflow_id=workflow.id,
-                success=execution.succeeded(),
-                step_count=workflow.step_count(),
-            )
-        )
 
         self.git_manager.commit(workspace, message="Workflow completed")
 
