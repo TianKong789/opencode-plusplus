@@ -16,7 +16,7 @@ from core.models.skill import Skill
 from evolution.loop import EvolutionLoop
 from evolution.prompt_evolver import PromptEvolver
 from evolution.skill_evolver import SkillEvolver
-from skills.extractor import SkillExtractor
+from core.interfaces.skill_extractor import SkillExtractor
 
 
 @dataclass(slots=True, frozen=True)

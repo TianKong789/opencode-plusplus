@@ -3,12 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from core.ids import ExperienceId, SkillId
+from core.interfaces.skill_extractor import SkillExtractor as SkillExtractorPort
 from core.models.experience import Experience
 from core.models.skill import Skill
 
 
 @dataclass(slots=True, frozen=True)
-class SkillExtractor:
+class SkillExtractor(SkillExtractorPort):
     """Extracts skills from accumulated experiences.
 
     Analyzes experience patterns and produces Skill records

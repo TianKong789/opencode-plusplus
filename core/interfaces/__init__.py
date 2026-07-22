@@ -19,6 +19,7 @@ from core.interfaces.reflector import Reflector
 from core.interfaces.researcher import Researcher
 from core.interfaces.reviewer import Reviewer
 from core.interfaces.routing_policy import RoutingContext, RoutingPolicy
+from core.interfaces.skill_extractor import SkillExtractor
 from core.interfaces.skill_repository import SkillRepository
 from core.interfaces.task_classifier import TaskClassifier
 from core.interfaces.tester import Tester
@@ -49,6 +50,7 @@ __all__ = [
     "Reviewer",
     "RoutingContext",
     "RoutingPolicy",
+    "SkillExtractor",
     "SkillRepository",
     "TaskClassifier",
     "Tester",
