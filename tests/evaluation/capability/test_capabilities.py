@@ -4,7 +4,7 @@ import re
 
 import pytest
 
-from src.opencode.evaluation.capability.capabilities import Capability
+from core.models import Capability
 
 
 class TestCapabilityMembers:

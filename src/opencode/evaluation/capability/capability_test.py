@@ -6,42 +6,10 @@ The CapabilityAssessor discovers and runs these tests.
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import CapabilityScore, Model
-
-
-class CapabilityTest(ABC):
-    """Base class for capability tests.
-
-    Each capability implements its own test logic.
-    The assessor discovers and runs these tests automatically.
-    """
-
-    @abstractmethod
-    def capability(self) -> Capability:
-        """Return the capability this test evaluates."""
-
-    @abstractmethod
-    def run(self, model: Model) -> CapabilityScore:
-        """Execute the test against a model.
-
-        Args:
-            model: The model to test.
-
-        Returns:
-            A CapabilityScore with score, confidence, and evidence.
-        """
-
-    @abstractmethod
-    def load_tasks(self) -> tuple[dict[str, object], ...]:
-        """Load test tasks for this capability.
-
-        Returns:
-            Tuple of task definitions as dictionaries.
-        """
+from core.interfaces import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 
 
 @dataclass

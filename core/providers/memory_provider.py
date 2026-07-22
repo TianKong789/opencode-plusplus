@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.memory_provider import MemoryProvider
+
 
 class MemoryProviderProvider(ABC):
     """Factory for MemoryProvider instances.
@@ -10,5 +12,5 @@ class MemoryProviderProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> MemoryProvider:
         """Create and return a MemoryProvider instance."""

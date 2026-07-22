@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.reflector import Reflector
+
 
 class ReflectorProvider(ABC):
     """Factory for Reflector instances.
@@ -10,5 +12,5 @@ class ReflectorProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> Reflector:
         """Create and return a Reflector instance."""

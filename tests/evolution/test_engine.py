@@ -1,3 +1,5 @@
+import pytest
+
 from evolution.engine import EvolutionEngine
 from evolution.loop import EvolutionLoop
 from evolution.skill_evolver import SkillEvolver
@@ -74,7 +76,7 @@ class TestEvolutionEngine:
             verdict=Verdict.PASS,
             criteria=("quality",),
         )
-        engine.metrics.record(ev)
+        engine = engine._with_metrics(engine.metrics.record(ev))
         assert engine.improvement_delta(baseline=0.5) == pytest.approx(0.3)
 
     def test_improvement_delta_without_baseline(self) -> None:
@@ -86,8 +88,5 @@ class TestEvolutionEngine:
             verdict=Verdict.PASS,
             criteria=("quality",),
         )
-        engine.metrics.record(ev)
+        engine = engine._with_metrics(engine.metrics.record(ev))
         assert engine.improvement_delta() == pytest.approx(0.6)
-
-
-import pytest

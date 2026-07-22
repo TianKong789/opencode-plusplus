@@ -1,9 +1,11 @@
 from core.interfaces.asset_repository import AssetProtocol, AssetRepository
 from core.interfaces.benchmark_runner import BenchmarkRunner
 from core.interfaces.capability_assessor import CapabilityAssessor
+from core.interfaces.capability_test import CapabilityTest
 from core.interfaces.coder import Coder
 from core.interfaces.evaluator import Evaluator
 from core.interfaces.event_bus import EventBus
+from core.interfaces.experience_store import ExperienceStore
 from core.interfaces.execution_engine import ExecutionEngine
 from core.interfaces.executor import Executor
 from core.interfaces.git_manager import GitManager
@@ -26,9 +28,11 @@ __all__ = [
     "AssetRepository",
     "BenchmarkRunner",
     "CapabilityAssessor",
+    "CapabilityTest",
     "Coder",
     "Evaluator",
     "EventBus",
+    "ExperienceStore",
     "ExecutionEngine",
     "Executor",
     "GitManager",

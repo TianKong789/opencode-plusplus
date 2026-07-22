@@ -9,10 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from core.ids import ModelId
+from core.interfaces import ModelRegistry as ModelRegistryPort
 
 
 @dataclass
-class ModelRegistry:
+class ModelRegistry(ModelRegistryPort):
     """Registry of available models and their metadata.
 
     Stores model information and provides efficient lookup by

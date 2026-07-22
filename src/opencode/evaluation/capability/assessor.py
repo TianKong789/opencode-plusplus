@@ -7,13 +7,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.capability_test import CapabilityTest
-from src.opencode.evaluation.capability.models import CapabilityScore, Model
+from core.interfaces import CapabilityAssessor as CapabilityAssessorPort
+from core.interfaces import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 
 
 @dataclass
-class CapabilityAssessor:
+class CapabilityAssessor(CapabilityAssessorPort):
     """Assesses model capabilities by running registered tests.
 
     Tests are injected via constructor or registered after init.

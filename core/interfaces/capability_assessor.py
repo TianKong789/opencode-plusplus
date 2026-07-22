@@ -2,61 +2,37 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from core.ids import CapabilityId, ModelId
+from core.interfaces.capability_test import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 
 
 class CapabilityAssessor(ABC):
-    """Assesses model capabilities against task requirements.
-
-    Evaluates how well a given model can handle a specific task
-    based on historical performance, benchmarks, and task characteristics.
-    """
+    """Assesses models by running registered capability tests."""
 
     @abstractmethod
-    def assess(self, model_id: ModelId, task_description: str) -> float:
-        """Assess how well a model can handle a task.
-
-        Args:
-            model_id: The model to assess.
-            task_description: A description of the task requirements.
-
-        Returns:
-            A score between 0.0 and 1.0 indicating suitability.
-        """
+    def register_test(self, test: CapabilityTest) -> None:
+        """Register a capability test."""
 
     @abstractmethod
-    def get_capability(self, capability_id: CapabilityId) -> dict[str, object] | None:
-        """Retrieve a capability profile by identifier.
-
-        Args:
-            capability_id: The unique identifier of the capability profile.
-
-        Returns:
-            The capability profile if found, None otherwise.
-        """
+    def get_test(self, capability: Capability) -> CapabilityTest | None:
+        """Get the test registered for a capability."""
 
     @abstractmethod
-    def list_capabilities(self, model_id: ModelId) -> tuple[CapabilityId, ...]:
-        """List all capability profiles for a model.
-
-        Args:
-            model_id: The model to list capabilities for.
-
-        Returns:
-            A tuple of capability profile IDs.
-        """
+    def list_capabilities(self) -> tuple[Capability, ...]:
+        """List capabilities with registered tests."""
 
     @abstractmethod
-    def update_assessment(
-        self,
-        model_id: ModelId,
-        task_description: str,
-        actual_performance: float,
-    ) -> None:
-        """Update assessment based on actual task performance.
+    def assess(self, model: Model, capability: Capability) -> CapabilityScore | None:
+        """Run a capability test against a model."""
 
-        Args:
-            model_id: The model that was used.
-            task_description: The task that was performed.
-            actual_performance: The observed performance score (0.0 to 1.0).
-        """
+    @abstractmethod
+    def assess_all(self, model: Model) -> tuple[CapabilityScore, ...]:
+        """Run all registered tests against a model."""
+
+    @abstractmethod
+    def get_results(self, model_id: str) -> tuple[CapabilityScore, ...]:
+        """Get prior assessment results for a model."""
+
+    @abstractmethod
+    def clear_results(self, model_id: str | None = None) -> None:
+        """Clear results for one model or for all models."""

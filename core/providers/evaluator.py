@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.evaluator import Evaluator
+
 
 class EvaluatorProvider(ABC):
     """Factory for Evaluator instances.
@@ -10,5 +12,5 @@ class EvaluatorProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> Evaluator:
         """Create and return an Evaluator instance."""

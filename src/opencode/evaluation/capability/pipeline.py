@@ -14,10 +14,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from core.ids import ModelId
+from core.models import Capability, ModelCapabilityProfile
 
 from src.opencode.evaluation.capability.assessor import CapabilityAssessor
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import ModelCapabilityProfile
 from src.opencode.evaluation.capability.profiler import Profiler
 from src.opencode.evaluation.capability.registry import ModelRegistry
 from src.opencode.evaluation.capability.test_runner import TestRunner

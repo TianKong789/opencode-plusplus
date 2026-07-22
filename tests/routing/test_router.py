@@ -3,11 +3,10 @@ from __future__ import annotations
 import pytest
 
 from core.ids import ModelId, TaskCategoryId, TaskId
+from core.interfaces import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 from core.models.task import Task
 from src.opencode.evaluation.capability.assessor import CapabilityAssessor
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.capability_test import CapabilityTest
-from src.opencode.evaluation.capability.models import CapabilityScore, Model
 from src.opencode.evaluation.capability.registry import ModelRegistry
 from src.opencode.routing.router import ModelRouter
 

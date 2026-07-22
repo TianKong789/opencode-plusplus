@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.git_manager import GitManager
+
 
 class GitManagerProvider(ABC):
     """Factory for GitManager instances.
@@ -10,5 +12,5 @@ class GitManagerProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> GitManager:
         """Create and return a GitManager instance."""

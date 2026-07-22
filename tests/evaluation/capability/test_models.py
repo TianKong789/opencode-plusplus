@@ -4,8 +4,7 @@ from dataclasses import FrozenInstanceError, replace
 
 import pytest
 
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import CapabilityScore, ModelCapabilityProfile
+from core.models import Capability, CapabilityScore, ModelCapabilityProfile
 
 
 def _make_profile() -> ModelCapabilityProfile:

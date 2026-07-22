@@ -10,8 +10,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from core.ids import ModelId
-
-from src.opencode.evaluation.capability.models import ModelCapabilityProfile
+from core.models import ModelCapabilityProfile
 
 
 @dataclass(slots=True, frozen=True)

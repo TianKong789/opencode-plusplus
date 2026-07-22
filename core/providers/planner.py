@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.planner import Planner
+
 
 class PlannerProvider(ABC):
     """Factory for Planner instances.
@@ -10,5 +12,5 @@ class PlannerProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> Planner:
         """Create and return a Planner instance."""

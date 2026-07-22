@@ -26,19 +26,19 @@ class TestMetricsTracker:
 
     def test_record_and_average(self) -> None:
         tracker = MetricsTracker()
-        tracker.record(_make_evaluation(score=0.6))
-        tracker.record(_make_evaluation(score=0.8))
+        tracker = tracker.record(_make_evaluation(score=0.6))
+        tracker = tracker.record(_make_evaluation(score=0.8))
         assert tracker.average_score() == 0.7
         assert tracker.count() == 2
 
     def test_pass_rate(self) -> None:
         tracker = MetricsTracker()
-        tracker.record(_make_evaluation(verdict=Verdict.PASS))
-        tracker.record(_make_evaluation(verdict=Verdict.FAIL))
+        tracker = tracker.record(_make_evaluation(verdict=Verdict.PASS))
+        tracker = tracker.record(_make_evaluation(verdict=Verdict.FAIL))
         assert tracker.pass_rate() == 0.5
 
     def test_all_passing(self) -> None:
         tracker = MetricsTracker()
-        tracker.record(_make_evaluation(verdict=Verdict.PASS))
-        tracker.record(_make_evaluation(verdict=Verdict.PASS))
+        tracker = tracker.record(_make_evaluation(verdict=Verdict.PASS))
+        tracker = tracker.record(_make_evaluation(verdict=Verdict.PASS))
         assert tracker.pass_rate() == 1.0

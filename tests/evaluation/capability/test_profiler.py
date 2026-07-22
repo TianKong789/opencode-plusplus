@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import CapabilityScore
+from core.models import Capability, CapabilityScore
 from src.opencode.evaluation.capability.profiler import Profiler
 
 

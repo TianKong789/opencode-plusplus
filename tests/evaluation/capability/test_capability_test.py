@@ -4,10 +4,10 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from src.opencode.evaluation.capability.capabilities import Capability
+from core.interfaces import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 from src.opencode.evaluation.capability.capability_test import (
     ArchitectureCapabilityTest,
-    CapabilityTest,
     CodeReviewCapabilityTest,
     DebuggingCapabilityTest,
     DocumentationCapabilityTest,
@@ -20,7 +20,6 @@ from src.opencode.evaluation.capability.capability_test import (
     get_all_tests,
     get_test_for_capability,
 )
-from src.opencode.evaluation.capability.models import CapabilityScore, Model
 
 
 ConcreteCapabilityTest = (

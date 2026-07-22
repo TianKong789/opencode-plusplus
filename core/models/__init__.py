@@ -13,10 +13,12 @@ from core.ids import (
 )
 from core.models.benchmark import Benchmark
 from core.models.code_artifact import ArtifactStatus, CodeArtifact
+from core.models.capability import Capability
 from core.models.evaluation import Evaluation, Verdict
 from core.models.execution import Execution, ExecutionStatus
 from core.models.experience import Experience
 from core.models.message import Message, MessageRole
+from core.models.model_capability import CapabilityScore, Model, ModelCapabilityProfile
 from core.models.plan import Plan, PlanStatus
 from core.models.reflection import Reflection
 from core.models.research import Research
@@ -30,6 +32,8 @@ __all__ = [
     "BaseEntityId",
     "Benchmark",
     "BenchmarkId",
+    "Capability",
+    "CapabilityScore",
     "CodeArtifact",
     "ArtifactStatus",
     "Evaluation",
@@ -42,6 +46,8 @@ __all__ = [
     "Message",
     "MessageId",
     "MessageRole",
+    "Model",
+    "ModelCapabilityProfile",
     "Plan",
     "PlanId",
     "PlanStatus",

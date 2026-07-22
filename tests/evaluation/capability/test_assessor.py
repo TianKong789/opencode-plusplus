@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+from core.interfaces import CapabilityTest
+from core.models import Capability, CapabilityScore, Model
 from src.opencode.evaluation.capability.assessor import CapabilityAssessor
-from src.opencode.evaluation.capability.capabilities import Capability
 from src.opencode.evaluation.capability.capability_test import (
-    CapabilityTest,
     PythonCapabilityTest,
     SQLCapabilityTest,
 )
-from src.opencode.evaluation.capability.models import CapabilityScore, Model
 
 
 class CustomMathCapabilityTest(CapabilityTest):

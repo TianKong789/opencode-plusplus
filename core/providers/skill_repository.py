@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from core.interfaces.skill_repository import SkillRepository
+
 
 class SkillRepositoryProvider(ABC):
     """Factory for SkillRepository instances.
@@ -10,5 +12,5 @@ class SkillRepositoryProvider(ABC):
     """
 
     @abstractmethod
-    def create(self) -> object:
+    def create(self) -> SkillRepository:
         """Create and return a SkillRepository instance."""

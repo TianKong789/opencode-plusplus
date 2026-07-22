@@ -46,18 +46,31 @@ class EvolutionEngine:
             current_prompt=self.current_prompt,
         )
 
+    def _with_metrics(self, metrics: MetricsTracker) -> EvolutionEngine:
+        """Return a copy with updated metrics."""
+        return EvolutionEngine(
+            loop=self.loop,
+            suite=self.suite,
+            evolver=self.evolver,
+            metrics=metrics,
+            prompt_evolver=self.prompt_evolver,
+            skill_extractor=self.skill_extractor,
+            current_prompt=self.current_prompt,
+        )
+
     # ── benchmarking ───────────────────────────────────────────────
 
-    def run_benchmarks(self, skills: tuple[Skill, ...]) -> tuple[float, ...]:
+    def run_benchmarks(self, skills: tuple[Skill, ...]) -> tuple[tuple[float, ...], EvolutionEngine]:
         """Run all benchmarks in the suite and record evaluations.
 
         Args:
             skills: Skills whose benchmarks to run.
 
         Returns:
-            A score per skill (average of its benchmark evaluations).
+            A tuple of (scores per skill, new engine with updated metrics).
         """
         scores: list[float] = []
+        metrics = self.metrics
         for skill in skills:
             benchmarks = self.suite.get_for_skill(skill.id)
             if not benchmarks:
@@ -75,11 +88,12 @@ class EvolutionEngine:
                     criteria=(bench.name,),
                     summary=f"Benchmark {bench.name}: {'passed' if passed else 'failed'}",
                 )
-                self.metrics.record(evaluation)
+                metrics = metrics.record(evaluation)
                 skill_scores.append(score)
             avg = sum(skill_scores) / len(skill_scores) if skill_scores else skill.proficiency
             scores.append(avg)
-        return tuple(scores)
+        new_engine = self._with_metrics(metrics)
+        return tuple(scores), new_engine
 
     def evolve_skills(
         self,
@@ -116,37 +130,38 @@ class EvolutionEngine:
         Returns:
             A tuple of (evolved skills, generation evaluation, new engine).
         """
+        engine = self
         if scores is None:
-            scores = self.run_benchmarks(skills)
+            scores, engine = self.run_benchmarks(skills)
 
-        evolved = self.evolve_skills(skills, scores)
+        evolved = engine.evolve_skills(skills, scores)
         avg_score = sum(scores) / len(scores) if scores else 0.0
-        baseline = self.metrics.average_score()
+        baseline = engine.metrics.average_score()
         delta = avg_score - baseline
 
         evaluation = Evaluation(
-            id=EvaluationId(f"gen-eval-{self.loop.current_iteration}"),
+            id=EvaluationId(f"gen-eval-{engine.loop.current_iteration}"),
             execution_id=ExecutionId(f"gen-{uuid.uuid4().hex[:8]}"),
             score=avg_score,
             verdict=Verdict.PASS if delta >= 0 else Verdict.FAIL,
             criteria=("generation",),
-            summary=f"Generation {self.loop.current_iteration}: avg={avg_score:.3f} delta={delta:+.3f}",
+            summary=f"Generation {engine.loop.current_iteration}: avg={avg_score:.3f} delta={delta:+.3f}",
         )
-        self.metrics.record(evaluation)
+        metrics = engine.metrics.record(evaluation)
 
-        new_prompt = self.current_prompt
-        if self.prompt_evolver is not None and self.current_prompt:
-            new_prompt = self.prompt_evolver.mutate(
-                self.current_prompt, evaluation.summary,
+        new_prompt = engine.current_prompt
+        if engine.prompt_evolver is not None and engine.current_prompt:
+            new_prompt = engine.prompt_evolver.mutate(
+                engine.current_prompt, evaluation.summary,
             )
 
         new_engine = EvolutionEngine(
-            loop=self.loop.record_iteration(),
-            suite=self.suite,
-            evolver=self.evolver,
-            metrics=self.metrics,
-            prompt_evolver=self.prompt_evolver,
-            skill_extractor=self.skill_extractor,
+            loop=engine.loop.record_iteration(),
+            suite=engine.suite,
+            evolver=engine.evolver,
+            metrics=metrics,
+            prompt_evolver=engine.prompt_evolver,
+            skill_extractor=engine.skill_extractor,
             current_prompt=new_prompt,
         )
         return evolved, evaluation, new_engine

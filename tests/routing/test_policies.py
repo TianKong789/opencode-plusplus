@@ -6,7 +6,7 @@ from math import inf
 import pytest
 
 from core.ids import ModelId
-from src.opencode.evaluation.capability.models import ModelCapabilityProfile
+from core.models import ModelCapabilityProfile
 from src.opencode.routing.policies import (
     BalancedPolicy,
     CloudPreferredPolicy,

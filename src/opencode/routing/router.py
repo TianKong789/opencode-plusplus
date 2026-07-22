@@ -9,12 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from core.ids import ModelId, TaskCategoryId
+from core.interfaces import CapabilityAssessor, ModelRegistry
+from core.models import Capability, Model, ModelCapabilityProfile
 from core.models.task import Task
-
-from src.opencode.evaluation.capability.assessor import CapabilityAssessor
-from src.opencode.evaluation.capability.capabilities import Capability
-from src.opencode.evaluation.capability.models import Model, ModelCapabilityProfile
-from src.opencode.evaluation.capability.registry import ModelRegistry
 from src.opencode.routing.policies import BalancedPolicy, RoutingContext, RoutingPolicy
 
 

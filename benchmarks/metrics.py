@@ -1,26 +1,30 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from core.models.evaluation import Evaluation
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class MetricsTracker:
     """Tracks performance metrics over time.
 
     Stores evaluation results and computes aggregate statistics.
+    Frozen dataclass — ``record()`` returns a new instance.
     """
 
-    _history: list[Evaluation] = field(default_factory=list, init=False, repr=False)
+    _history: tuple[Evaluation, ...] = field(default_factory=tuple)
 
-    def record(self, evaluation: Evaluation) -> None:
-        """Record an evaluation result.
+    def record(self, evaluation: Evaluation) -> MetricsTracker:
+        """Return a new tracker with the evaluation appended.
 
         Args:
             evaluation: The evaluation to record.
+
+        Returns:
+            A new MetricsTracker with the updated history.
         """
-        self._history.append(evaluation)
+        return replace(self, _history=self._history + (evaluation,))
 
     def average_score(self) -> float:
         """Compute the average score across all recorded evaluations.
