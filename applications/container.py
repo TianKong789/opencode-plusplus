@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from dependency_injector import containers, providers
 
 from agents.executor import ExecutorAgent
@@ -7,6 +9,8 @@ from agents.planner import PlannerAgent
 from agents.reflector import ReflectorAgent
 from applications.orchestrator import Orchestrator
 from applications.services import ExperienceCapture
+from benchmarks.metrics import MetricsTracker
+from benchmarks.suite import BenchmarkSuite
 from configs.application import ApplicationConfig
 from configs.benchmark import BenchmarkConfig
 from configs.git import GitConfig
@@ -16,7 +20,11 @@ from configs.workspace import WorkspaceConfig
 from core.null_objects import NullEventBus
 from evaluation.benchmark_runner import DefaultBenchmarkRunner
 from evaluation.evaluator import LLMEvaluator
+from evolution.engine import EvolutionEngine
+from evolution.loop import EvolutionLoop
+from evolution.skill_evolver import SkillEvolver
 from memory.experience_store import ExperienceStore
+from memory.file_reflection_repository import FileReflectionRepository
 from memory.skill_repository import InMemorySkillRepository
 from runtime.event_bus import SyncEventBus
 from runtime.execution_engine import LocalExecutionEngine
@@ -78,3 +86,22 @@ class Container(containers.DeclarativeContainer):
     )
     benchmark_runner = providers.Singleton(DefaultBenchmarkRunner)
     skill_repository = providers.Singleton(InMemorySkillRepository)
+    reflection_path = providers.Callable(Path, memory.provided.path)
+    reflection_repository = providers.Singleton(
+        FileReflectionRepository,
+        base_path=reflection_path,
+    )
+    benchmark_suite = providers.Singleton(BenchmarkSuite)
+    metrics_tracker = providers.Singleton(MetricsTracker)
+    evolution_loop = providers.Singleton(EvolutionLoop)
+    skill_evolver = providers.Singleton(SkillEvolver)
+    evolution_engine = providers.Singleton(
+        EvolutionEngine,
+        loop=evolution_loop,
+        suite=benchmark_suite,
+        evolver=skill_evolver,
+        metrics=metrics_tracker,
+        experience_store=memory_provider,
+        reflection_repository=reflection_repository,
+        skill_repository=skill_repository,
+    )

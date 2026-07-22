@@ -117,3 +117,10 @@ Assets persists        →  Skills, Experiences, Benchmarks, Prompts, Workflows
 ### Port Usage
 
 Each layer exposes interfaces in `core/interfaces/`. Implementations live in their respective layer directories. The DI container (`applications/container.py`) wires implementations to ports.
+
+### Architecture Exceptions
+
+The following are exempt from the "depend only on core/interfaces" rule:
+
+- `core/ids.py`: Typed ID wrappers (WorkflowId, SkillId, etc.) are shared across all layers to prevent ID confusion.
+- `core/assets/`: Asset value types (Benchmark, Prompt, Skill, Template, Workflow) are shared domain types used by all layers.

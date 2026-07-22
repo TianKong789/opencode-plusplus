@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from applications.services import ExperienceCapture
 from core.events import (
     EvaluationCompleted,
-    ExperienceStored,
     PlanGenerated,
     ReflectionCompleted,
     TaskReceived,
@@ -111,15 +110,7 @@ class Orchestrator:
             )
         )
 
-        experience = self.experience_service.capture(reflection)
-        self.event_bus.publish(
-            ExperienceStored(
-                source="orchestrator",
-                experience_id=experience.id,
-                reflection_id=experience.reflection_id,
-                lesson=experience.lesson,
-            )
-        )
+        self.experience_service.capture(reflection)
 
         self.workspace_manager.destroy(workspace.id)
 

@@ -3,10 +3,10 @@ from __future__ import annotations
 import uuid
 from dataclasses import dataclass, field
 
-from benchmarks.metrics import MetricsTracker
-from benchmarks.suite import BenchmarkSuite
 from core.ids import EvaluationId, ExecutionId, ExperienceId, ReflectionId
+from core.interfaces.benchmark_suite import BenchmarkSuitePort
 from core.interfaces.experience_store import ExperienceStore
+from core.interfaces.metrics_tracker import MetricsTrackerPort
 from core.interfaces.reflection_repository import ReflectionRepository
 from core.interfaces.skill_repository import SkillRepository
 from core.models.evaluation import Evaluation, Verdict
@@ -29,9 +29,9 @@ class EvolutionEngine:
     """
 
     loop: EvolutionLoop
-    suite: BenchmarkSuite
+    suite: BenchmarkSuitePort
     evolver: SkillEvolver
-    metrics: MetricsTracker
+    metrics: MetricsTrackerPort
     prompt_evolver: PromptEvolver | None = None
     skill_extractor: SkillExtractor | None = None
     experience_store: ExperienceStore | None = None
@@ -56,7 +56,7 @@ class EvolutionEngine:
             current_prompt=self.current_prompt,
         )
 
-    def _with_metrics(self, metrics: MetricsTracker) -> EvolutionEngine:
+    def _with_metrics(self, metrics: MetricsTrackerPort) -> EvolutionEngine:
         """Return a copy with updated metrics."""
         return EvolutionEngine(
             loop=self.loop,

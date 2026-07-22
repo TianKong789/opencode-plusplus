@@ -6,80 +6,9 @@ based on various optimization criteria.
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-
 from core.ids import ModelId
+from core.interfaces.routing_policy import RoutingContext, RoutingPolicy
 from core.models import ModelCapabilityProfile
-
-
-@dataclass(slots=True, frozen=True)
-class RoutingContext:
-    """Context for routing decisions.
-
-    Attributes:
-        profiles: Available model profiles.
-        task_description: Description of the task.
-        required_capabilities: Capabilities needed for the task.
-        max_latency_ms: Maximum acceptable latency.
-        max_cost: Maximum acceptable cost per 1K tokens.
-    """
-
-    profiles: tuple[ModelCapabilityProfile, ...]
-    task_description: str
-    required_capabilities: tuple[str, ...] = ()
-    max_latency_ms: float = float("inf")
-    max_cost: float = float("inf")
-
-
-class RoutingPolicy(ABC):
-    """Base class for routing policies.
-
-    Implementations define different strategies for selecting
-    the optimal model from a set of candidates.
-    """
-
-    @abstractmethod
-    def select(self, context: RoutingContext) -> ModelId | None:
-        """Select the best model based on policy criteria.
-
-        Args:
-            context: The routing context with candidates and constraints.
-
-        Returns:
-            The selected model ID, or None if no model meets criteria.
-        """
-
-    @abstractmethod
-    def score(self, profile: ModelCapabilityProfile, context: RoutingContext) -> float:
-        """Score a model profile for the given context.
-
-        Args:
-            profile: The model profile to score.
-            context: The routing context.
-
-        Returns:
-            A score where higher is better.
-        """
-
-    def _filter_candidates(
-        self,
-        context: RoutingContext,
-    ) -> tuple[ModelCapabilityProfile, ...]:
-        """Filter candidates by hard constraints.
-
-        Args:
-            context: The routing context.
-
-        Returns:
-            Tuple of profiles that meet all constraints.
-        """
-        return tuple(
-            p
-            for p in context.profiles
-            if p.average_latency_ms <= context.max_latency_ms
-            and p.estimated_cost <= context.max_cost
-        )
 
 
 class LatencyPolicy(RoutingPolicy):

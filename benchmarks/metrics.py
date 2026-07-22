@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 
+from core.interfaces.metrics_tracker import MetricsTrackerPort
 from core.models.evaluation import Evaluation
 
 
 @dataclass(slots=True, frozen=True)
-class MetricsTracker:
+class MetricsTracker(MetricsTrackerPort):
     """Tracks performance metrics over time.
 
     Stores evaluation results and computes aggregate statistics.

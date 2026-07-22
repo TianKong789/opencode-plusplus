@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from core.interfaces.benchmark_suite import BenchmarkSuitePort
 from core.models.benchmark import Benchmark
 
 
 @dataclass(slots=True)
-class BenchmarkSuite:
+class BenchmarkSuite(BenchmarkSuitePort):
     """Manages and runs collections of benchmarks.
 
     Stores benchmarks by skill and coordinates batch execution.
