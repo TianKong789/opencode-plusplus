@@ -2,6 +2,17 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from applications.orchestrator import Orchestrator
+from core.events import (
+    EvaluationCompleted,
+    ExperienceStored,
+    PlanGenerated,
+    ReflectionCompleted,
+    TaskReceived,
+    WorkflowCompleted,
+    WorkflowStarted,
+)
+from core.events.base import BaseEvent
 from core.ids import (
     EvaluationId,
     ExecutionId,
@@ -16,7 +27,7 @@ from core.models.plan import Plan, PlanStatus
 from core.models.reflection import Reflection
 from core.models.task import Task
 from core.models.workspace import Workspace
-from runtime.orchestrator import Orchestrator
+from runtime.event_bus import SyncEventBus
 
 
 # ---------------------------------------------------------------------------
@@ -101,6 +112,7 @@ def _make_orchestrator(**overrides: MagicMock) -> Orchestrator:
         "reflector": _mock_reflector(),
         "experience_service": _mock_experience_service(),
         "git_manager": _mock_git_manager(),
+        "event_bus": SyncEventBus(),
     }
     defaults.update(overrides)
     return Orchestrator(**defaults)  # type: ignore[arg-type]
@@ -123,7 +135,7 @@ def test_orchestrator_is_dataclass() -> None:
     assert "experience_service" in field_names
     assert "git_manager" in field_names
     assert "workspace_base" in field_names
-    assert "event_bus" not in field_names
+    assert "event_bus" in field_names
 
 
 # ---------------------------------------------------------------------------
@@ -131,11 +143,31 @@ def test_orchestrator_is_dataclass() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_run_returns_reflection() -> None:
-    orch = _make_orchestrator()
+def test_run_returns_reflection_and_emits_lifecycle_events() -> None:
+    event_bus = SyncEventBus()
+    events: list[BaseEvent] = []
+    event_bus.subscribe(TaskReceived, events.append)
+    event_bus.subscribe(PlanGenerated, events.append)
+    event_bus.subscribe(WorkflowStarted, events.append)
+    event_bus.subscribe(WorkflowCompleted, events.append)
+    event_bus.subscribe(EvaluationCompleted, events.append)
+    event_bus.subscribe(ReflectionCompleted, events.append)
+    event_bus.subscribe(ExperienceStored, events.append)
+
+    orch = _make_orchestrator(event_bus=event_bus)
     result = orch.run(_make_task())
+
     assert isinstance(result, Reflection)
     assert result.id == "refl-1"
+    assert [type(event) for event in events] == [
+        TaskReceived,
+        PlanGenerated,
+        WorkflowStarted,
+        WorkflowCompleted,
+        EvaluationCompleted,
+        ReflectionCompleted,
+        ExperienceStored,
+    ]
 
 
 def test_run_calls_planner_with_task() -> None:

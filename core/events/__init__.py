@@ -8,7 +8,7 @@ from core.events.plan import PlanGenerated
 from core.events.reflection import ReflectionCompleted
 from core.events.skill import SkillCreated
 from core.events.skill_extracted import SkillExtracted
-from core.events.task import TaskCreated
+from core.events.task import TaskCreated, TaskReceived
 from core.events.workflow import StepCompleted, StepStarted, WorkflowCompleted, WorkflowStarted
 
 __all__ = [
@@ -26,6 +26,7 @@ __all__ = [
     "StepCompleted",
     "StepStarted",
     "TaskCreated",
+    "TaskReceived",
     "WorkflowCompleted",
     "WorkflowStarted",
 ]

@@ -5,9 +5,13 @@ from dataclasses import dataclass, field
 
 from benchmarks.metrics import MetricsTracker
 from benchmarks.suite import BenchmarkSuite
-from core.ids import EvaluationId, ExecutionId
+from core.ids import EvaluationId, ExecutionId, ExperienceId, ReflectionId
+from core.interfaces.experience_store import ExperienceStore
+from core.interfaces.reflection_repository import ReflectionRepository
+from core.interfaces.skill_repository import SkillRepository
 from core.models.evaluation import Evaluation, Verdict
 from core.models.experience import Experience
+from core.models.reflection import Reflection
 from core.models.skill import Skill
 from evolution.loop import EvolutionLoop
 from evolution.prompt_evolver import PromptEvolver
@@ -30,6 +34,9 @@ class EvolutionEngine:
     metrics: MetricsTracker
     prompt_evolver: PromptEvolver | None = None
     skill_extractor: SkillExtractor | None = None
+    experience_store: ExperienceStore | None = None
+    reflection_repository: ReflectionRepository | None = None
+    skill_repository: SkillRepository | None = None
     current_prompt: str = field(default="")
 
     # ── helpers ─────────────────────────────────────────────────────
@@ -43,6 +50,9 @@ class EvolutionEngine:
             metrics=self.metrics,
             prompt_evolver=self.prompt_evolver,
             skill_extractor=self.skill_extractor,
+            experience_store=self.experience_store,
+            reflection_repository=self.reflection_repository,
+            skill_repository=self.skill_repository,
             current_prompt=self.current_prompt,
         )
 
@@ -55,6 +65,9 @@ class EvolutionEngine:
             metrics=metrics,
             prompt_evolver=self.prompt_evolver,
             skill_extractor=self.skill_extractor,
+            experience_store=self.experience_store,
+            reflection_repository=self.reflection_repository,
+            skill_repository=self.skill_repository,
             current_prompt=self.current_prompt,
         )
 
@@ -111,6 +124,43 @@ class EvolutionEngine:
         """
         return tuple(self.evolver.adapt(s, sc) for s, sc in zip(skills, scores))
 
+    def persist_results(
+        self,
+        skills: tuple[Skill, ...],
+        evaluation: Evaluation,
+    ) -> None:
+        """Persist the evolved skills and evaluation outcome when repositories exist."""
+        if self.skill_repository is not None:
+            for skill in skills:
+                self.skill_repository.save(skill)
+
+        lesson = evaluation.summary or f"Generation {evaluation.id}: score={evaluation.score:.3f}"
+        reflection = Reflection(
+            id=ReflectionId(f"generation-reflection-{evaluation.id}"),
+            evaluation_id=evaluation.id,
+            insights=(lesson,),
+            improvements=tuple(
+                f"{skill.name}: proficiency={skill.proficiency:.3f}" for skill in skills
+            ),
+            root_cause=evaluation.verdict.value,
+        )
+        if self.reflection_repository is not None:
+            self.reflection_repository.save(reflection)
+
+        if self.experience_store is not None:
+            self.experience_store.store_experience(
+                Experience(
+                    id=ExperienceId(f"generation-experience-{evaluation.id}"),
+                    reflection_id=reflection.id,
+                    lesson=lesson,
+                    context=(
+                        f"criteria={', '.join(evaluation.criteria)} "
+                        f"score={evaluation.score:.3f} verdict={evaluation.verdict.value}"
+                    ),
+                    confidence=evaluation.score,
+                )
+            )
+
     # ── generation ─────────────────────────────────────────────────
 
     def run_generation(
@@ -162,8 +212,12 @@ class EvolutionEngine:
             metrics=metrics,
             prompt_evolver=engine.prompt_evolver,
             skill_extractor=engine.skill_extractor,
+            experience_store=engine.experience_store,
+            reflection_repository=engine.reflection_repository,
+            skill_repository=engine.skill_repository,
             current_prompt=new_prompt,
         )
+        new_engine.persist_results(evolved, evaluation)
         return evolved, evaluation, new_engine
 
     # ── skill extraction ──────────────────────────────────────────
@@ -194,7 +248,10 @@ class EvolutionEngine:
             raise RuntimeError(
                 "No SkillExtractor provided. Inject one at construction."
             )
-        return self.skill_extractor.extract(experiences, name, description)
+        skill = self.skill_extractor.extract(experiences, name, description)
+        if self.skill_repository is not None:
+            self.skill_repository.save(skill)
+        return skill
 
     def run_full_loop(
         self,

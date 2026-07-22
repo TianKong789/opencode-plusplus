@@ -11,3 +11,11 @@ class TaskCreated(BaseEvent):
 
     task_id: str = ""
     title: str = ""
+
+
+@dataclass(slots=True, frozen=True)
+class TaskReceived(BaseEvent):
+    """Emitted when the application orchestrator receives a task."""
+
+    task_id: str = ""
+    title: str = ""

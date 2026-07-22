@@ -6,7 +6,6 @@ from core.interfaces.workspace_manager import WorkspaceManager
 from runtime.event_bus import SyncEventBus
 from runtime.execution_engine import LocalExecutionEngine
 from runtime.git_manager import LocalGitManager
-from runtime.orchestrator import Orchestrator
 from runtime.workflow_runner import LocalWorkflowRunner
 from runtime.workspace_manager import LocalWorkspaceManager
 
@@ -18,7 +17,6 @@ __all__ = [
     "LocalGitManager",
     "LocalWorkflowRunner",
     "LocalWorkspaceManager",
-    "Orchestrator",
     "SyncEventBus",
     "WorkflowRunner",
     "WorkspaceManager",

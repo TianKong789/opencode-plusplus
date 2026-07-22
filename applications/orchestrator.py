@@ -3,8 +3,18 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
+from core.events import (
+    EvaluationCompleted,
+    ExperienceStored,
+    PlanGenerated,
+    ReflectionCompleted,
+    TaskReceived,
+    WorkflowCompleted,
+    WorkflowStarted,
+)
 from core.ids import WorkflowId, WorkflowStepId
 from core.interfaces.evaluator import Evaluator
+from core.interfaces.event_bus import EventBus
 from core.interfaces.git_manager import GitManager
 from core.interfaces.planner import Planner
 from core.interfaces.reflector import Reflector
@@ -22,11 +32,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(slots=True, frozen=True)
 class Orchestrator:
-    """Pure command coordinator for Task → Plan → Workflow → Execution → Evaluation → Reflection → Experience.
-
-    Orchestrator calls services in order. Services own their events.
-    Orchestrator does not publish events.
-    """
+    """Coordinates the application lifecycle and publishes its stage events."""
 
     planner: Planner
     workflow_runner: WorkflowRunner
@@ -35,12 +41,28 @@ class Orchestrator:
     reflector: Reflector
     experience_service: ExperienceCapture
     git_manager: GitManager
+    event_bus: EventBus
     workspace_base: str = "/tmp/opencode-workspaces"
 
     def run(self, task: Task) -> Reflection:
         logger.info("Orchestrator starting task: %s", task.title)
+        self.event_bus.publish(
+            TaskReceived(
+                source="orchestrator",
+                task_id=task.id,
+                title=task.title,
+            )
+        )
 
         plan = self.planner.create_plan(task)
+        self.event_bus.publish(
+            PlanGenerated(
+                source="orchestrator",
+                plan_id=plan.id,
+                task_id=plan.task_id,
+                step_count=plan.step_count(),
+            )
+        )
 
         workspace = self.workspace_manager.create(
             name=f"task-{task.id}",
@@ -50,14 +72,55 @@ class Orchestrator:
         self.git_manager.initialize_if_needed(workspace.root_path)
 
         workflow = self._plan_to_workflow(plan)
+        self.event_bus.publish(
+            WorkflowStarted(
+                source="orchestrator",
+                workflow_id=workflow.id,
+                step_count=workflow.step_count(),
+            )
+        )
         execution = self.workflow_runner.run(workflow, workspace)
+        self.event_bus.publish(
+            WorkflowCompleted(
+                source="orchestrator",
+                workflow_id=workflow.id,
+                success=execution.succeeded(),
+                step_count=workflow.step_count(),
+            )
+        )
 
         self.git_manager.commit(workspace, message="Workflow completed")
 
         evaluation = self.evaluator.evaluate(execution)
-        reflection = self.reflector.reflect(evaluation)
+        self.event_bus.publish(
+            EvaluationCompleted(
+                source="orchestrator",
+                evaluation_id=evaluation.id,
+                execution_id=evaluation.execution_id,
+                score=evaluation.score,
+                verdict=evaluation.verdict.value,
+            )
+        )
 
-        self.experience_service.capture(reflection)
+        reflection = self.reflector.reflect(evaluation)
+        self.event_bus.publish(
+            ReflectionCompleted(
+                source="orchestrator",
+                reflection_id=reflection.id,
+                evaluation_id=reflection.evaluation_id,
+                insight_count=len(reflection.insights),
+            )
+        )
+
+        experience = self.experience_service.capture(reflection)
+        self.event_bus.publish(
+            ExperienceStored(
+                source="orchestrator",
+                experience_id=experience.id,
+                reflection_id=experience.reflection_id,
+                lesson=experience.lesson,
+            )
+        )
 
         self.workspace_manager.destroy(workspace.id)
 
