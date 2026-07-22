@@ -139,13 +139,31 @@ class AssessmentPipeline:
     def get_model_profile(self, model_id: str) -> ModelCapabilityProfile | None:
         """Get the capability profile for a model.
 
+        Delegates to the profiler to build a profile from recorded results.
+        Returns None if the model has no recorded assessment data.
+
         Args:
             model_id: The model identifier.
 
         Returns:
             The profile if available, None otherwise.
         """
-        return None
+        all_scores = self.profiler.get_all_scores(model_id)
+        if not all_scores:
+            return None
+
+        model_info = self.registry.get(ModelId(model_id))
+        provider = str(model_info.get("provider", "")) if model_info else "unknown"
+        model_name = str(model_info.get("name", model_id)) if model_info else model_id
+
+        return self.profiler.build_profile(
+            model_id=model_id,
+            provider=provider,
+            model_name=model_name,
+            version="1.0",
+            context_window=128000,
+            max_output_tokens=8192,
+        )
 
     def list_assessed_models(self) -> tuple[str, ...]:
         """List all models that have been assessed.

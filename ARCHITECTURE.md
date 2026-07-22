@@ -70,13 +70,15 @@ Phase 0  Foundation
 
 Phase 1  Execution Runtime
 
-Phase 2  Memory
+Phase 2  Model Intelligence
 
-Phase 3  Skills
+Phase 3  Experience Memory
 
-Phase 4  Multi-Agent System
+Phase 4  Skill System
 
-Phase 5  Evolution Lab
+Phase 5  Multi-Agent Collaboration
 
-Phase 6  Recursive Self-Improvement
+Phase 6  Evolution Lab
+
+Phase 7  Recursive Self-Improvement
 

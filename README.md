@@ -67,9 +67,9 @@ pip install -e ".[dev]"
 
 ## Current Status
 
-Phase 0: Architecture and foundation.
+All 8 development phases complete (Phase 0–7).
 
-The project is currently focused on defining core domain models, interfaces, and system architecture before implementation of agent functionality.
+See [docs/roadmap.md](docs/roadmap.md) for detailed progress per phase.
 
 ## License
 

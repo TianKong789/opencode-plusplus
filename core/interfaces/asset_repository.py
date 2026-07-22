@@ -3,7 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Protocol, runtime_checkable
 
-from core.assets.metadata import AssetId, AssetMetadata, PromotionStatus
+from core.ids import AssetId
+from core.models.asset_metadata import AssetMetadata, PromotionStatus
 
 
 @runtime_checkable

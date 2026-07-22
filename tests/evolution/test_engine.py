@@ -34,16 +34,17 @@ class TestEvolutionEngine:
     def test_run_generation_evolves_skills(self) -> None:
         engine = _make_engine()
         skill = _make_skill(proficiency=0.5)
-        evolved, evaluation = engine.run_generation((skill,), (0.8,))
+        evolved, evaluation, new_engine = engine.run_generation((skill,), (0.8,))
         assert len(evolved) == 1
         assert evolved[0].use_count == skill.use_count + 1
         assert evaluation.score == 0.8
+        assert new_engine.loop.current_iteration == 1
 
     def test_run_generation_multiple_skills(self) -> None:
         engine = _make_engine()
         s1 = _make_skill(skill_id="s1", proficiency=0.3)
         s2 = _make_skill(skill_id="s2", proficiency=0.7)
-        evolved, _ = engine.run_generation((s1, s2), (0.9, 0.4))
+        evolved, _, _ = engine.run_generation((s1, s2), (0.9, 0.4))
         assert len(evolved) == 2
         assert evolved[0].use_count == 1
         assert evolved[1].use_count == 1
@@ -55,20 +56,9 @@ class TestEvolutionEngine:
     def test_is_complete_after_iterations(self) -> None:
         engine = _make_engine(max_iter=2)
         skill = _make_skill()
-        _, _ = engine.run_generation((skill,), (0.8,))
-        engine = EvolutionEngine(
-            loop=engine.loop.record_iteration(),
-            suite=engine.suite,
-            evolver=engine.evolver,
-            metrics=engine.metrics,
-        )
-        _, _ = engine.run_generation((skill,), (0.9,))
-        engine = EvolutionEngine(
-            loop=engine.loop.record_iteration(),
-            suite=engine.suite,
-            evolver=engine.evolver,
-            metrics=engine.metrics,
-        )
+        _, _, engine = engine.run_generation((skill,), (0.8,))
+        assert not engine.is_complete()
+        _, _, engine = engine.run_generation((skill,), (0.9,))
         assert engine.is_complete()
 
     def test_improvement_delta_zero_with_no_data(self) -> None:
