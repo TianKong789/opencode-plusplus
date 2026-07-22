@@ -12,7 +12,7 @@ from core.models.skill import Skill
 from memory.experience_store import ExperienceStore
 from memory.reflection_repository import InMemoryReflectionRepository
 from memory.skill_repository import InMemorySkillRepository
-from skills.extractor import SkillExtractor
+from evolution.skill_extractor import DefaultSkillExtractor
 
 
 def _make_skill(
@@ -122,7 +122,7 @@ class TestEvolutionEngine:
             suite=BenchmarkSuite(),
             evolver=SkillEvolver(),
             metrics=MetricsTracker(),
-            skill_extractor=SkillExtractor(),
+            skill_extractor=DefaultSkillExtractor(),
             skill_repository=skill_repository,
         )
         experience = Experience(

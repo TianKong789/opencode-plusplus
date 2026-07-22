@@ -1,10 +1,10 @@
 from core.ids import ExperienceId, ReflectionId
 from core.models.experience import Experience
-from skills.extractor import SkillExtractor
+from evolution.skill_extractor import DefaultSkillExtractor
 
 
 def test_extract_skill_from_experiences() -> None:
-    extractor = SkillExtractor()
+    extractor = DefaultSkillExtractor()
     experiences = (
         Experience(
             id=ExperienceId("e1"),

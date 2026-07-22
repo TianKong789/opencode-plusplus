@@ -130,36 +130,14 @@ class EvolutionEngine:
         evaluation: Evaluation,
     ) -> None:
         """Persist the evolved skills and evaluation outcome when repositories exist."""
-        if self.skill_repository is not None:
-            for skill in skills:
-                self.skill_repository.save(skill)
+        from applications.services import EvolutionPersistenceService
 
-        lesson = evaluation.summary or f"Generation {evaluation.id}: score={evaluation.score:.3f}"
-        reflection = Reflection(
-            id=ReflectionId(f"generation-reflection-{evaluation.id}"),
-            evaluation_id=evaluation.id,
-            insights=(lesson,),
-            improvements=tuple(
-                f"{skill.name}: proficiency={skill.proficiency:.3f}" for skill in skills
-            ),
-            root_cause=evaluation.verdict.value,
+        service = EvolutionPersistenceService(
+            skill_repository=self.skill_repository,
+            reflection_repository=self.reflection_repository,
+            experience_store=self.experience_store,
         )
-        if self.reflection_repository is not None:
-            self.reflection_repository.save(reflection)
-
-        if self.experience_store is not None:
-            self.experience_store.store_experience(
-                Experience(
-                    id=ExperienceId(f"generation-experience-{evaluation.id}"),
-                    reflection_id=reflection.id,
-                    lesson=lesson,
-                    context=(
-                        f"criteria={', '.join(evaluation.criteria)} "
-                        f"score={evaluation.score:.3f} verdict={evaluation.verdict.value}"
-                    ),
-                    confidence=evaluation.score,
-                )
-            )
+        service.persist(skills, evaluation)
 
     # ── generation ─────────────────────────────────────────────────
 
