@@ -18,7 +18,7 @@ from configs.llm import LLMConfig
 from configs.memory import MemoryConfig
 from configs.workspace import WorkspaceConfig
 from core.null_objects import NullEventBus
-from evaluation.benchmark_runner import DefaultBenchmarkRunner
+from benchmarks.benchmark_runner import DefaultBenchmarkRunner
 from evaluation.evaluator import LLMEvaluator
 from evolution.engine import EvolutionEngine
 from evolution.loop import EvolutionLoop

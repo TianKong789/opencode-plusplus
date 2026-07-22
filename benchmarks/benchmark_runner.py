@@ -21,18 +21,12 @@ class DefaultBenchmarkRunner(BenchmarkRunner):
     _benchmarks: dict[str, list[Benchmark]] | None = None
 
     def register_benchmarks(self, benchmarks: tuple[Benchmark, ...]) -> None:
-        """Register benchmarks for execution.
-
-        Args:
-            benchmarks: Benchmarks to make available for running.
-        """
         if self._benchmarks is None:
             self._benchmarks = {}
         for b in benchmarks:
             self._benchmarks.setdefault(b.skill_id, []).append(b)
 
     def discover_benchmarks(self, benchmark_dir: Path) -> tuple[Benchmark, ...]:
-        """Create benchmarks from capability metadata stored below a benchmark directory."""
         capabilities_dir = benchmark_dir / "capabilities"
         discovery_dir = capabilities_dir if capabilities_dir.is_dir() else benchmark_dir
         benchmarks: list[Benchmark] = []
@@ -78,14 +72,6 @@ class DefaultBenchmarkRunner(BenchmarkRunner):
         return tuple(sorted(benchmarks, key=lambda benchmark: benchmark.skill_id))
 
     def run(self, benchmark: Benchmark) -> Evaluation:
-        """Run a single benchmark and evaluate the outcome.
-
-        Args:
-            benchmark: The benchmark to execute.
-
-        Returns:
-            An evaluation with score and verdict.
-        """
         return Evaluation(
             id=EvaluationId(f"bench-eval-{benchmark.id}"),
             execution_id=ExecutionId(f"bench-{uuid.uuid4().hex[:8]}"),
@@ -96,28 +82,12 @@ class DefaultBenchmarkRunner(BenchmarkRunner):
         )
 
     def run_all(self, skill_id: str) -> tuple[Evaluation, ...]:
-        """Run all benchmarks associated with a skill.
-
-        Args:
-            skill_id: The identifier of the skill to benchmark.
-
-        Returns:
-            Tuple of evaluations, one per benchmark.
-        """
         if not self._benchmarks:
             self.register_benchmarks(self.discover_benchmarks(Path("benchmarks/capabilities")))
         benchmarks = self._benchmarks.get(skill_id, [])
         return tuple(self.run(b) for b in benchmarks)
 
     def get_benchmarks(self, skill_id: str) -> tuple[Benchmark, ...]:
-        """Retrieve all benchmarks for a given skill.
-
-        Args:
-            skill_id: The identifier of the skill.
-
-        Returns:
-            Tuple of benchmarks for the skill.
-        """
         if not self._benchmarks:
             return ()
         return tuple(self._benchmarks.get(skill_id, []))

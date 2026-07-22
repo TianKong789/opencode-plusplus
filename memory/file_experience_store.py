@@ -4,13 +4,13 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from core.interfaces.memory_provider import MemoryProvider
+from core.interfaces.experience_store import ExperienceStore as ExperienceStorePort
 from core.models.experience import Experience
 from core.models.skill import Skill
 
 
 @dataclass(slots=True)
-class FileExperienceStore(MemoryProvider):
+class FileExperienceStore(ExperienceStorePort):
     """File-backed experience and skill store.
 
     Persists experiences and skills as JSON files in a directory.

@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from core.interfaces.memory_provider import MemoryProvider
+from core.interfaces.experience_store import ExperienceStore as ExperienceStorePort
 from core.models.experience import Experience
 from core.models.skill import Skill
 
 
 @dataclass(slots=True)
-class ExperienceStore(MemoryProvider):
+class ExperienceStore(ExperienceStorePort):
     """In-memory experience and skill store.
 
     Suitable for development and testing. Replace with a persistent

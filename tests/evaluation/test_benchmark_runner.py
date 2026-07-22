@@ -8,7 +8,7 @@ import pytest
 from core.ids import BenchmarkId, SkillId
 from core.models.benchmark import Benchmark
 from core.models.evaluation import Verdict
-from evaluation.benchmark_runner import DefaultBenchmarkRunner
+from benchmarks.benchmark_runner import DefaultBenchmarkRunner
 
 
 def _write_metadata(capability_dir: Path, capability: str) -> None:

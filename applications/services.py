@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from core.events.experience import ExperienceStored
 from core.ids import ExperienceId
 from core.interfaces.event_bus import EventBus
-from core.interfaces.memory_provider import MemoryProvider
+from core.interfaces.experience_store import ExperienceStore
 from core.models.experience import Experience
 from core.models.reflection import Reflection
 
@@ -14,7 +14,7 @@ from core.models.reflection import Reflection
 class ExperienceCapture:
     """Converts reflections into durable experiences and publishes the result."""
 
-    memory: MemoryProvider
+    memory: ExperienceStore
     event_bus: EventBus
 
     def capture(self, reflection: Reflection) -> Experience:

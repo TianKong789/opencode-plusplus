@@ -10,7 +10,6 @@ from core.interfaces.experience_store import ExperienceStore
 from core.interfaces.execution_engine import ExecutionEngine
 from core.interfaces.executor import Executor
 from core.interfaces.git_manager import GitManager
-from core.interfaces.memory_provider import MemoryProvider
 from core.interfaces.metrics_tracker import MetricsTrackerPort
 from core.interfaces.model_registry import ModelRegistry
 from core.interfaces.model_router import ModelRouter
@@ -40,7 +39,6 @@ __all__ = [
     "ExecutionEngine",
     "Executor",
     "GitManager",
-    "MemoryProvider",
     "MetricsTrackerPort",
     "ModelRegistry",
     "ModelRouter",
