@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.ids import BenchmarkId, SkillId
+
 
 @dataclass(slots=True, frozen=True)
 class Benchmark:
-    id: str
-    skill_id: str
+    id: BenchmarkId
+    skill_id: SkillId
     name: str
     input_data: str
     expected_output: str

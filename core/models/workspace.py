@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.ids import TaskId, WorkspaceId
+
 
 @dataclass(slots=True, frozen=True)
 class Workspace:
-    id: str
+    id: WorkspaceId
     name: str
     root_path: str
-    task_ids: tuple[str, ...] = ()
+    task_ids: tuple[TaskId, ...] = ()
     active: bool = True
 
     def __post_init__(self) -> None:

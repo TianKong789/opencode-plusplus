@@ -1,0 +1,11 @@
+{
+  "capability": "architecture",
+  "version": "0.1.0",
+  "description": "System architecture and design proficiency benchmark",
+  "scoring": {
+    "completeness": 0.4,
+    "soundness": 0.4,
+    "scalability": 0.2
+  },
+  "difficulty_levels": ["basic", "intermediate", "advanced"]
+}

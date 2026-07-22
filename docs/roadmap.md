@@ -2,36 +2,59 @@
 
 > Development milestones for OpenCode++.
 
-## Phase 1 — Foundation
+## Phase 0 — Foundation
 
+- [x] Project structure
 - [x] Domain models
 - [x] Interface definitions
 - [x] Event models
 - [x] Custom exceptions
 - [x] Configuration classes
 - [x] DI container
-- [ ] Placeholder implementations
+- [x] Documentation
 
-## Phase 2 — Runtime
+## Phase 1 — Execution Runtime
 
-- [ ] Execution engine
-- [ ] Workspace manager
-- [ ] Git integration
+- [x] Execution engine abstraction
+- [x] OpenCode adapter
+- [x] Workspace management
+- [x] Git integration
 
-## Phase 3 — Intelligence
+## Phase 2 — Model Intelligence
 
-- [ ] Planner implementation
-- [ ] Evaluator implementation
-- [ ] Reflector implementation
+- [x] Model capability profiling
+- [x] Task-to-model matching
+- [x] Automatic model selection
+- [x] Performance tracking per model
 
-## Phase 4 — Memory
+## Phase 3 — Experience Memory
 
-- [ ] Memory provider
-- [ ] Skill repository
-- [ ] Experience consolidation
+- [x] Experience repository
+- [x] Reflection storage
+- [x] Search capability
 
-## Phase 5 — Evolution
+## Phase 4 — Skill System
 
-- [ ] Benchmark runner
-- [ ] Skill proficiency tracking
-- [ ] Continuous learning loop
+- [x] Skill extraction
+- [x] Skill repository
+- [x] Skill versioning
+
+## Phase 5 — Multi-Agent Collaboration
+
+- [x] Planner agent
+- [x] Coder agent
+- [x] Reviewer agent
+- [x] Tester agent
+- [x] Researcher agent
+- [x] Reflector agent
+
+## Phase 6 — Evolution Lab
+
+- [x] Benchmark runner
+- [x] Skill proficiency tracking
+- [x] Continuous learning loop
+
+## Phase 7 — Recursive Self-Improvement
+
+- [x] Benchmark-driven self-improvement
+- [x] measurable improvement across benchmark suites

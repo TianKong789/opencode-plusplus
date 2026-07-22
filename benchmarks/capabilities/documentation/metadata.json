@@ -1,0 +1,11 @@
+{
+  "capability": "documentation",
+  "version": "0.1.0",
+  "description": "Technical documentation proficiency benchmark",
+  "scoring": {
+    "clarity": 0.4,
+    "completeness": 0.3,
+    "accuracy": 0.3
+  },
+  "difficulty_levels": ["basic", "intermediate", "advanced"]
+}

@@ -1,0 +1,11 @@
+{
+  "capability": "sql",
+  "version": "0.1.0",
+  "description": "SQL query writing proficiency benchmark",
+  "scoring": {
+    "correctness": 0.5,
+    "efficient": 0.3,
+    "readable": 0.2
+  },
+  "difficulty_levels": ["basic", "intermediate", "advanced"]
+}

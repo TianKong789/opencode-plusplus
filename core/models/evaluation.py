@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, unique
 
+from core.ids import EvaluationId, ExecutionId
+
 
 @unique
 class Verdict(Enum):
@@ -13,8 +15,8 @@ class Verdict(Enum):
 
 @dataclass(slots=True, frozen=True)
 class Evaluation:
-    id: str
-    execution_id: str
+    id: EvaluationId
+    execution_id: ExecutionId
     score: float
     verdict: Verdict
     criteria: tuple[str, ...]

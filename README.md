@@ -1,6 +1,31 @@
 # OpenCode++
 
-An AI system built in Python.
+OpenCode++ is a continuously learning AI engineering platform.
+
+Unlike traditional coding assistants, OpenCode++ is designed to improve not only the software it builds, but also its own skills, workflows, prompts, memory, planning strategies, and evaluation methods.
+
+The long-term goal is to create an AI engineering system that can accumulate experience across projects, learn from successes and failures, and continuously improve through benchmark-driven recursive self-improvement.
+
+## Core Principle
+
+Everything is an Experience.
+
+Every engineering task follows the lifecycle:
+
+Task → Plan → Execute → Evaluate → Reflect → Experience
+
+Experiences become the foundation for memory, skill extraction, benchmarking, and future improvements.
+
+## Major Components
+
+Orchestrator
+Agent Framework
+Execution Engine Adapters
+Memory System
+Skill Library
+Evaluation Framework
+Evolution Lab
+Benchmark Framework
 
 ## Project Structure
 
@@ -19,6 +44,14 @@ An AI system built in Python.
 ├── tests/          # Test suite
 └── docs/           # Documentation
 ```
+## Design Goals
+
+Modular architecture
+Execution engine independence
+Long-term memory
+Skill accumulation
+Benchmark-driven evolution
+Explainable decision making
 
 ## Setup
 
@@ -32,6 +65,12 @@ pip install -e .
 pip install -e ".[dev]"
 ```
 
+## Current Status
+
+Phase 0: Architecture and foundation.
+
+The project is currently focused on defining core domain models, interfaces, and system architecture before implementation of agent functionality.
+
 ## License
 
-MIT
+See LICENSE for details.

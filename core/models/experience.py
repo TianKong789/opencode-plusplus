@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.ids import ExperienceId, ReflectionId
+
 
 @dataclass(slots=True, frozen=True)
 class Experience:
-    id: str
-    reflection_id: str
+    id: ExperienceId
+    reflection_id: ReflectionId
     lesson: str
     context: str
     confidence: float = 1.0

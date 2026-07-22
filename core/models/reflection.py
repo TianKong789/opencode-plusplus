@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from core.ids import EvaluationId, ReflectionId
+
 
 @dataclass(slots=True, frozen=True)
 class Reflection:
-    id: str
-    evaluation_id: str
+    id: ReflectionId
+    evaluation_id: EvaluationId
     insights: tuple[str, ...]
     improvements: tuple[str, ...]
     root_cause: str = ""

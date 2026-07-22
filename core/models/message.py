@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, unique
 
+from core.ids import MessageId
+
 
 @unique
 class MessageRole(Enum):
@@ -13,10 +15,10 @@ class MessageRole(Enum):
 
 @dataclass(slots=True, frozen=True)
 class Message:
-    id: str
+    id: MessageId
     role: MessageRole
     content: str
-    parent_id: str | None = None
+    parent_id: MessageId | None = None
 
     def __post_init__(self) -> None:
         if not self.id:

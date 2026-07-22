@@ -1,0 +1,11 @@
+{
+  "capability": "python",
+  "version": "0.1.0",
+  "description": "Python coding proficiency benchmark",
+  "scoring": {
+    "correctness": 0.4,
+    "idiomatic": 0.3,
+    "efficient": 0.3
+  },
+  "difficulty_levels": ["basic", "intermediate", "advanced"]
+}

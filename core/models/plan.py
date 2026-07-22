@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, unique
 
+from core.ids import PlanId, TaskId
+
 
 @unique
 class PlanStatus(Enum):
@@ -15,8 +17,8 @@ class PlanStatus(Enum):
 
 @dataclass(slots=True, frozen=True)
 class Plan:
-    id: str
-    task_id: str
+    id: PlanId
+    task_id: TaskId
     strategy: str
     steps: tuple[str, ...]
     status: PlanStatus = PlanStatus.DRAFT

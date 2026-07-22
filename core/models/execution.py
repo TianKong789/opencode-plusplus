@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, unique
 
+from core.ids import ExecutionId, PlanId
+
 
 @unique
 class ExecutionStatus(Enum):
@@ -15,8 +17,8 @@ class ExecutionStatus(Enum):
 
 @dataclass(slots=True, frozen=True)
 class Execution:
-    id: str
-    plan_id: str
+    id: ExecutionId
+    plan_id: PlanId
     status: ExecutionStatus = ExecutionStatus.QUEUED
     outputs: tuple[str, ...] = ()
     error: str | None = None
