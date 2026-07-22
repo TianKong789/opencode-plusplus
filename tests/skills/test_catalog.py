@@ -1,4 +1,5 @@
-from skills.catalog import ALL_BENCHMARKS, ALL_SKILLS, PYTHON_DATACLASS_MODELING
+from benchmarks.definitions import ALL_BENCHMARKS
+from skills.catalog import ALL_SKILLS, PYTHON_DATACLASS_MODELING
 from skills.registry import SkillRegistry
 
 

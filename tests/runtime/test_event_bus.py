@@ -6,7 +6,8 @@ from core.events.base import BaseEvent
 from core.events.execution import ExecutionCompleted
 from core.events.workflow import WorkflowStarted, StepStarted, StepCompleted, WorkflowCompleted
 from core.interfaces.event_bus import EventBus
-from runtime.event_bus import SyncEventBus, NullEventBus
+from core.null_objects import NullEventBus
+from runtime.event_bus import SyncEventBus
 
 
 # ---------------------------------------------------------------------------

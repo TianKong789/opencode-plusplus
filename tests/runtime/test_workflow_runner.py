@@ -71,15 +71,6 @@ def _system_step(name: str = "init", target: str = "noop") -> WorkflowStep:
     )
 
 
-def _agent_step() -> WorkflowStep:
-    return WorkflowStep(
-        id=WorkflowStepId("step-2"),
-        name="Agent step",
-        type=StepType.AGENT,
-        target="planner",
-    )
-
-
 def _capture_events(bus: SyncEventBus) -> list[BaseEvent]:
     """Subscribe to all four workflow event types and return collected events."""
     events: list[BaseEvent] = []
@@ -188,7 +179,7 @@ def test_run_skips_non_engine_steps() -> None:
     engine = StubEngine()
     runner = LocalWorkflowRunner(engine=engine)
     ws = _make_workspace()
-    workflow = _make_workflow(_agent_step(), _engine_step("x"))
+    workflow = _make_workflow(_system_step("skip-me", "noop"), _engine_step("x"))
 
     result = runner.run(workflow, ws)
 

@@ -136,12 +136,6 @@ class AssessmentPipeline:
             score=result.average_score,
         )
 
-        self.assessor.update_assessment(
-            model_id=ModelId(model_id),
-            task_description=f"capability:{capability.value}",
-            actual_performance=result.average_score,
-        )
-
     def get_model_profile(self, model_id: str) -> ModelCapabilityProfile | None:
         """Get the capability profile for a model.
 

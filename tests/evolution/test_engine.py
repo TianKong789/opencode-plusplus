@@ -34,10 +34,10 @@ class TestEvolutionEngine:
     def test_run_generation_evolves_skills(self) -> None:
         engine = _make_engine()
         skill = _make_skill(proficiency=0.5)
-        evolved, loop = engine.run_generation((skill,), (0.8,))
+        evolved, evaluation = engine.run_generation((skill,), (0.8,))
         assert len(evolved) == 1
         assert evolved[0].use_count == skill.use_count + 1
-        assert loop.current_iteration == 1
+        assert evaluation.score == 0.8
 
     def test_run_generation_multiple_skills(self) -> None:
         engine = _make_engine()
@@ -55,16 +55,16 @@ class TestEvolutionEngine:
     def test_is_complete_after_iterations(self) -> None:
         engine = _make_engine(max_iter=2)
         skill = _make_skill()
-        _, loop1 = engine.run_generation((skill,), (0.8,))
+        _, _ = engine.run_generation((skill,), (0.8,))
         engine = EvolutionEngine(
-            loop=loop1,
+            loop=engine.loop.record_iteration(),
             suite=engine.suite,
             evolver=engine.evolver,
             metrics=engine.metrics,
         )
-        _, loop2 = engine.run_generation((skill,), (0.9,))
+        _, _ = engine.run_generation((skill,), (0.9,))
         engine = EvolutionEngine(
-            loop=loop2,
+            loop=engine.loop.record_iteration(),
             suite=engine.suite,
             evolver=engine.evolver,
             metrics=engine.metrics,

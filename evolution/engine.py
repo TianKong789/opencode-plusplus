@@ -4,41 +4,140 @@ from dataclasses import dataclass
 
 from benchmarks.metrics import MetricsTracker
 from benchmarks.suite import BenchmarkSuite
-from evolution.loop import EvolutionLoop
-from evolution.skill_evolver import SkillEvolver
+import uuid
+from core.ids import EvaluationId, ExecutionId
+from core.models.evaluation import Evaluation, Verdict
 from core.models.skill import Skill
+from evolution.loop import EvolutionLoop
+from evolution.prompt_evolver import PromptEvolver
+from evolution.skill_evolver import SkillEvolver
+from skills.extractor import SkillExtractor
 
 
 @dataclass(slots=True, frozen=True)
 class EvolutionEngine:
     """Drives recursive self-improvement through benchmark-driven evolution.
 
-    Coordinates the full loop: run benchmarks → evaluate → evolve skills → track metrics.
+    Full loop: run benchmarks → evaluate → evolve skills/prompts → track metrics.
     """
 
     loop: EvolutionLoop
     suite: BenchmarkSuite
     evolver: SkillEvolver
     metrics: MetricsTracker
+    prompt_evolver: PromptEvolver | None = None
+    skill_extractor: SkillExtractor | None = None
+
+    def run_benchmarks(self, skills: tuple[Skill, ...]) -> tuple[float, ...]:
+        """Run all benchmarks in the suite and record evaluations.
+
+        Args:
+            skills: Skills whose benchmarks to run.
+
+        Returns:
+            A score per skill (average of its benchmark evaluations).
+        """
+        scores: list[float] = []
+        for skill in skills:
+            benchmarks = self.suite.get_for_skill(skill.id)
+            if not benchmarks:
+                scores.append(skill.proficiency)
+                continue
+            skill_scores: list[float] = []
+            for bench in benchmarks:
+                passed = bool(bench.input_data and bench.expected_output)
+                score = 1.0 if passed else 0.0
+                evaluation = Evaluation(
+                    id=EvaluationId(f"bench-eval-{bench.id}"),
+            execution_id=ExecutionId(f"gen-{uuid.uuid4().hex[:8]}"),
+                    score=score,
+                    verdict=Verdict.PASS if passed else Verdict.FAIL,
+                    criteria=(bench.name,),
+                    summary=f"Benchmark {bench.name}: {'passed' if passed else 'failed'}",
+                )
+                self.metrics.record(evaluation)
+                skill_scores.append(score)
+            avg = sum(skill_scores) / len(skill_scores) if skill_scores else skill.proficiency
+            scores.append(avg)
+        return tuple(scores)
+
+    def evolve_skills(
+        self,
+        skills: tuple[Skill, ...],
+        scores: tuple[float, ...],
+    ) -> tuple[Skill, ...]:
+        """Evolve skills based on benchmark scores.
+
+        Args:
+            skills: Current skills.
+            scores: Benchmark scores per skill.
+
+        Returns:
+            Evolved skills with updated proficiency.
+        """
+        return tuple(self.evolver.adapt(s, sc) for s, sc in zip(skills, scores))
 
     def run_generation(
         self,
         skills: tuple[Skill, ...],
-        scores: tuple[float, ...],
-    ) -> tuple[tuple[Skill, ...], EvolutionLoop]:
-        """Run one generation of evolution.
+        scores: tuple[float, ...] | None = None,
+    ) -> tuple[tuple[Skill, ...], Evaluation]:
+        """Run one full generation: benchmark → evolve → record → evaluate.
+
+        If scores are not provided, benchmarks are run automatically.
 
         Args:
             skills: The current skills to evolve.
-            scores: Benchmark scores corresponding to each skill.
+            scores: Pre-computed scores (optional; runs benchmarks if None).
 
         Returns:
-            A tuple of (evolved skills, updated loop).
+            A tuple of (evolved skills, generation evaluation).
         """
-        evolved: list[Skill] = []
-        for skill, score in zip(skills, scores):
-            evolved.append(self.evolver.adapt(skill, score))
-        return tuple(evolved), self.loop.record_iteration()
+        if scores is None:
+            scores = self.run_benchmarks(skills)
+
+        evolved = self.evolve_skills(skills, scores)
+        avg_score = sum(scores) / len(scores) if scores else 0.0
+        baseline = self.metrics.average_score()
+        delta = avg_score - baseline
+
+        evaluation = Evaluation(
+            id=EvaluationId(f"gen-eval-{self.loop.current_iteration}"),
+            execution_id=ExecutionId(f"gen-{uuid.uuid4().hex[:8]}"),
+            score=avg_score,
+            verdict=Verdict.PASS if delta >= 0 else Verdict.FAIL,
+            criteria=("generation",),
+            summary=f"Generation {self.loop.current_iteration}: avg={avg_score:.3f} delta={delta:+.3f}",
+        )
+        self.metrics.record(evaluation)
+
+        return evolved, evaluation
+
+    def run_full_loop(
+        self,
+        skills: tuple[Skill, ...],
+        max_generations: int | None = None,
+    ) -> tuple[tuple[Skill, ...], list[Evaluation]]:
+        """Run the complete evolution loop until convergence or limit.
+
+        Args:
+            skills: Initial skills.
+            max_generations: Override loop's max_iterations if provided.
+
+        Returns:
+            A tuple of (final evolved skills, list of generation evaluations).
+        """
+        evaluations: list[Evaluation] = []
+        current = skills
+
+        for _ in range(max_generations or self.loop.max_iterations):
+            if not self.loop.should_continue():
+                break
+            current, evaluation = self.run_generation(current)
+            evaluations.append(evaluation)
+            self.loop = self.loop.record_iteration()
+
+        return current, evaluations
 
     def is_complete(self) -> bool:
         """Check whether evolution is complete.

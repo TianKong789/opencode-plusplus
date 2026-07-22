@@ -13,7 +13,7 @@ from core.models.execution import Execution, ExecutionStatus
 from core.models.workflow import Workflow
 from core.models.workflow_step import StepType
 from core.models.workspace import Workspace
-from runtime.event_bus import NullEventBus
+from core.null_objects import NullEventBus
 
 logger = logging.getLogger(__name__)
 

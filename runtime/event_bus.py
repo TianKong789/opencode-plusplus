@@ -6,10 +6,7 @@ from dataclasses import dataclass, field
 from core.events.base import BaseEvent
 from core.interfaces.event_bus import EventBus
 
-# NullEventBus is the canonical null-object implementation.
-# Re-exported here for backward compatibility; new code should
-# import from ``core.null_objects`` directly.
-from core.null_objects import NullEventBus  # noqa: F401
+# NullEventBus canonical location: ``core.null_objects``.
 
 
 @dataclass(slots=True, frozen=True)
@@ -42,26 +39,3 @@ class SyncEventBus(EventBus):
             handler: Callback invoked when a matching event is published.
         """
         self._subscribers.setdefault(event_type, []).append(handler)
-
-
-@dataclass(slots=True, frozen=True)
-class NullEventBus(EventBus):
-    """No-op event bus that discards all events.
-
-    Use when event publication is not needed (tests, development stubs).
-    """
-
-    def publish(self, event: BaseEvent) -> None:
-        """Discard the event (no-op).
-
-        Args:
-            event: The domain event (ignored).
-        """
-
-    def subscribe(self, event_type: type[BaseEvent], handler: Callable[[BaseEvent], None]) -> None:
-        """Register a handler (silently ignored — events are never dispatched).
-
-        Args:
-            event_type: The event class to listen for.
-            handler: Callback (never invoked).
-        """

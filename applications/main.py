@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from core.container import Container
+from applications.container import Container
 
 
 def main() -> None:

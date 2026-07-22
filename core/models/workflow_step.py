@@ -21,32 +21,16 @@ from core.ids import WorkflowStepId
 class StepType(Enum):
     """The kind of executor that handles a workflow step.
 
-    Attributes:
-        SKILL: Execute a registered skill from the skill repository.
-        AGENT: Delegate to a specialized agent (planner, coder, etc.).
-        TOOL: Invoke an external tool or MCP server.
-        ENGINE: Run through an execution engine (code execution).
-        SYSTEM: Internal system operation (no external invocation).
-        HUMAN: Requires human input or approval before proceeding.
+    Only ENGINE and SYSTEM are currently supported.  Additional step types
+    (SKILL, AGENT, TOOL, HUMAN) are planned for future phases but must not
+    be declared until a corresponding handler is implemented.
     """
-
-    SKILL = "skill"
-    """Execute a registered skill from the skill repository."""
-
-    AGENT = "agent"
-    """Delegate to a specialized agent (planner, coder, etc.)."""
-
-    TOOL = "tool"
-    """Invoke an external tool or MCP server."""
 
     ENGINE = "engine"
     """Run through an execution engine (code execution)."""
 
     SYSTEM = "system"
     """Internal system operation (no external invocation)."""
-
-    HUMAN = "human"
-    """Requires human input or approval before proceeding."""
 
 
 @dataclass(slots=True, frozen=True)

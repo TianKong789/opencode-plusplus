@@ -8,18 +8,18 @@ from core.interfaces.evaluator import Evaluator
 from core.interfaces.event_bus import EventBus
 from core.models.evaluation import Evaluation, Verdict
 from core.models.execution import Execution
-from runtime.event_bus import NullEventBus
+from core.null_objects import NullEventBus
 
 
 @dataclass(slots=True, frozen=True)
 class LLMEvaluator(Evaluator):
     """Evaluates execution results using heuristic scoring.
 
-    Placeholder implementation — replace with LLM-based evaluation
-    for production use.
+    Stores evaluations for retrieval by ID.
     """
 
     event_bus: EventBus = field(default_factory=NullEventBus)
+    _evaluations: dict[str, Evaluation] = field(default_factory=dict, init=False, repr=False)
 
     def evaluate(self, execution: Execution) -> Evaluation:
         if execution.succeeded():
@@ -37,6 +37,7 @@ class LLMEvaluator(Evaluator):
             criteria=("success",),
             summary=execution.error or "Execution completed",
         )
+        self._evaluations[evaluation.id] = evaluation
         self.event_bus.publish(
             EvaluationCompleted(
                 source="evaluator",
@@ -49,4 +50,4 @@ class LLMEvaluator(Evaluator):
         return evaluation
 
     def get_evaluation(self, evaluation_id: str) -> Evaluation | None:
-        return None
+        return self._evaluations.get(evaluation_id)

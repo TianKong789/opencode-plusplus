@@ -8,7 +8,7 @@ from core.models.skill import Skill
 
 
 @dataclass(slots=True, frozen=True)
-class FileSkillRepository(SkillRepository):
+class InMemorySkillRepository(SkillRepository):
     """In-memory skill repository.
 
     Suitable for development and testing. Replace with a file-backed
