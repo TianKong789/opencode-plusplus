@@ -6,19 +6,17 @@ from pathlib import Path
 
 from core.interfaces.experience_store import ExperienceStore as ExperienceStorePort
 from core.models.experience import Experience
-from core.models.skill import Skill
 
 
 @dataclass(slots=True)
 class FileExperienceStore(ExperienceStorePort):
-    """File-backed experience and skill store.
+    """File-backed experience store.
 
-    Persists experiences and skills as JSON files in a directory.
+    Persists experiences as JSON files in a directory.
     """
 
     base_path: Path
     _experiences: dict[str, Experience] = field(default_factory=dict, init=False, repr=False)
-    _skills: dict[str, Skill] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self.base_path.mkdir(parents=True, exist_ok=True)
@@ -38,27 +36,6 @@ class FileExperienceStore(ExperienceStorePort):
                 )
                 self._experiences[exp.id] = exp
 
-        skill_file = self.base_path / "skills.json"
-        if skill_file.exists():
-            data = json.loads(skill_file.read_text())
-            for item in data:
-                skill = Skill(
-                    id=item["id"],
-                    name=item["name"],
-                    description=item["description"],
-                    category=item.get("category", ""),
-                    level=item.get("level", ""),
-                    version=item.get("version", "0.1.0"),
-                    proficiency=item.get("proficiency", 0.0),
-                    benchmark_score=item.get("benchmark_score", 0.0),
-                    confidence=item.get("confidence", 0.0),
-                    experience_ids=tuple(item.get("experience_ids", [])),
-                    use_count=item.get("use_count", 0),
-                    dependencies=tuple(item.get("dependencies", [])),
-                    successors=tuple(item.get("successors", [])),
-                )
-                self._skills[skill.id] = skill
-
     def _save(self) -> None:
         exp_file = self.base_path / "experiences.json"
         exp_data = [
@@ -73,27 +50,6 @@ class FileExperienceStore(ExperienceStorePort):
         ]
         exp_file.write_text(json.dumps(exp_data, indent=2))
 
-        skill_file = self.base_path / "skills.json"
-        skill_data = [
-            {
-                "id": s.id,
-                "name": s.name,
-                "description": s.description,
-                "category": s.category,
-                "level": s.level,
-                "version": s.version,
-                "proficiency": s.proficiency,
-                "benchmark_score": s.benchmark_score,
-                "confidence": s.confidence,
-                "experience_ids": list(s.experience_ids),
-                "use_count": s.use_count,
-                "dependencies": list(s.dependencies),
-                "successors": list(s.successors),
-            }
-            for s in self._skills.values()
-        ]
-        skill_file.write_text(json.dumps(skill_data, indent=2))
-
     def store_experience(self, experience: Experience) -> None:
         self._experiences[experience.id] = experience
         self._save()
@@ -103,16 +59,6 @@ class FileExperienceStore(ExperienceStorePort):
 
     def list_experiences(self) -> tuple[Experience, ...]:
         return tuple(self._experiences.values())
-
-    def store_skill(self, skill: Skill) -> None:
-        self._skills[skill.id] = skill
-        self._save()
-
-    def get_skill(self, skill_id: str) -> Skill | None:
-        return self._skills.get(skill_id)
-
-    def list_skills(self) -> tuple[Skill, ...]:
-        return tuple(self._skills.values())
 
     def search_experiences(self, query: str) -> tuple[Experience, ...]:
         lower_query = query.lower()

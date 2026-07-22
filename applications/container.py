@@ -63,14 +63,14 @@ class Container(containers.DeclarativeContainer):
     executor = providers.Singleton(ExecutorAgent)
     evaluator = providers.Singleton(LLMEvaluator)
     reflector = providers.Singleton(ReflectorAgent)
-    memory_provider = providers.Singleton(ExperienceStore)
+    experience_store = providers.Singleton(ExperienceStore)
     execution_engine = providers.Singleton(LocalExecutionEngine)
     workflow_runner = providers.Singleton(LocalWorkflowRunner, engine=execution_engine, event_bus=event_bus)
     workspace_manager = providers.Singleton(LocalWorkspaceManager)
     git_manager = providers.Singleton(LocalGitManager)
     experience_service = providers.Singleton(
         ExperienceCapture,
-        memory=memory_provider,
+        experience_store=experience_store,
         event_bus=event_bus,
     )
     orchestrator = providers.Singleton(
@@ -101,7 +101,7 @@ class Container(containers.DeclarativeContainer):
         suite=benchmark_suite,
         evolver=skill_evolver,
         metrics=metrics_tracker,
-        experience_store=memory_provider,
+        experience_store=experience_store,
         reflection_repository=reflection_repository,
         skill_repository=skill_repository,
     )

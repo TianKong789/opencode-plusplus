@@ -14,7 +14,7 @@ from core.models.reflection import Reflection
 class ExperienceCapture:
     """Converts reflections into durable experiences and publishes the result."""
 
-    memory: ExperienceStore
+    experience_store: ExperienceStore
     event_bus: EventBus
 
     def capture(self, reflection: Reflection) -> Experience:
@@ -27,7 +27,7 @@ class ExperienceCapture:
             lesson=lesson,
             context=context,
         )
-        self.memory.store_experience(experience)
+        self.experience_store.store_experience(experience)
         self.event_bus.publish(
             ExperienceStored(
                 source="experience_capture",

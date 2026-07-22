@@ -26,7 +26,7 @@ ORCHESTRATOR_DESIGN = Skill(
     name="orchestrator-design",
     description=(
         "Design pipeline coordinators that wire together Planner, "
-        "Executor, Evaluator, Reflector, and MemoryProvider into "
+        "Executor, Evaluator, Reflector, and ExperienceStore into "
         "a single run() loop."
     ),
     proficiency=0.7,

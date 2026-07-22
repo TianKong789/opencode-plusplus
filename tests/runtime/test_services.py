@@ -25,7 +25,7 @@ def _make_reflection(
 def test_capture_stores_experience_in_memory() -> None:
     store = ExperienceStore()
     bus = SyncEventBus()
-    svc = ExperienceCapture(memory=store, event_bus=bus)
+    svc = ExperienceCapture(experience_store=store, event_bus=bus)
 
     experience = svc.capture(_make_reflection())
 
@@ -41,7 +41,7 @@ def test_capture_publishes_experience_stored_event() -> None:
     bus = SyncEventBus()
     events: list[ExperienceStored] = []
     bus.subscribe(ExperienceStored, lambda e: events.append(e))  # type: ignore[arg-type]
-    svc = ExperienceCapture(memory=ExperienceStore(), event_bus=bus)
+    svc = ExperienceCapture(experience_store=ExperienceStore(), event_bus=bus)
 
     svc.capture(_make_reflection())
 
@@ -52,7 +52,7 @@ def test_capture_publishes_experience_stored_event() -> None:
 
 
 def test_capture_uses_first_insight_as_lesson() -> None:
-    svc = ExperienceCapture(memory=ExperienceStore(), event_bus=SyncEventBus())
+    svc = ExperienceCapture(experience_store=ExperienceStore(), event_bus=SyncEventBus())
     reflection = _make_reflection(insights=("first", "second"))
 
     experience = svc.capture(reflection)
@@ -61,7 +61,7 @@ def test_capture_uses_first_insight_as_lesson() -> None:
 
 
 def test_capture_falls_back_to_root_cause_when_no_insights() -> None:
-    svc = ExperienceCapture(memory=ExperienceStore(), event_bus=SyncEventBus())
+    svc = ExperienceCapture(experience_store=ExperienceStore(), event_bus=SyncEventBus())
     reflection = _make_reflection(insights=(), root_cause="root issue")
 
     experience = svc.capture(reflection)
@@ -71,7 +71,7 @@ def test_capture_falls_back_to_root_cause_when_no_insights() -> None:
 
 
 def test_capture_builds_context_from_insights_when_no_root_cause() -> None:
-    svc = ExperienceCapture(memory=ExperienceStore(), event_bus=SyncEventBus())
+    svc = ExperienceCapture(experience_store=ExperienceStore(), event_bus=SyncEventBus())
     reflection = _make_reflection(insights=("a", "b"), root_cause="")
 
     experience = svc.capture(reflection)
