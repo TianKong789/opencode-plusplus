@@ -12,24 +12,12 @@ from core.models.reflection import Reflection
 
 @dataclass(slots=True, frozen=True)
 class ExperienceCapture:
-    """Converts Reflections into Experiences and persists them.
-
-    This is a Runtime Service — a command that changes the world
-    (stores experience) and emits an event describing what changed.
-    """
+    """Converts reflections into durable experiences and publishes the result."""
 
     memory: MemoryProvider
     event_bus: EventBus
 
     def capture(self, reflection: Reflection) -> Experience:
-        """Capture a reflection as a durable experience.
-
-        Args:
-            reflection: The reflection to capture.
-
-        Returns:
-            The stored experience.
-        """
         lesson = reflection.insights[0] if reflection.insights else reflection.root_cause
         context = reflection.root_cause or "; ".join(reflection.insights)
 

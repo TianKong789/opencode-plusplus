@@ -6,7 +6,7 @@ from core.models.experience import Experience
 from core.models.reflection import Reflection
 from memory.experience_store import ExperienceStore
 from runtime.event_bus import SyncEventBus
-from runtime.services import ExperienceCapture
+from applications.services import ExperienceCapture
 
 
 def _make_reflection(

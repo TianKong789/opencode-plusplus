@@ -7,5 +7,25 @@
     "idiomatic": 0.3,
     "efficient": 0.3
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "python-basic-palindrome",
+      "input_data": "Write a Python function is_palindrome(text: str) -> bool that returns True when text reads the same forward and backward after case-folding and removing non-alphanumeric characters.",
+      "expected_output": "A type-annotated implementation where is_palindrome('Never odd or even') returns True and is_palindrome('OpenCode') returns False.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "python-intermediate-grouping",
+      "input_data": "Given an iterable of (team, points) pairs, implement totals_by_team that returns a dictionary of each team's summed points without sorting the input.",
+      "expected_output": "A linear-time Python implementation producing {'red': 7, 'blue': 3} for [('red', 2), ('blue', 3), ('red', 5)].",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "python-advanced-context-manager",
+      "input_data": "Implement a synchronous context manager that temporarily sets an environment variable and restores its exact previous state, including removing it if it was originally absent.",
+      "expected_output": "A context manager whose restoration works after both normal completion and an exception raised inside the with block.",
+      "difficulty": "advanced"
+    }
+  ]
 }

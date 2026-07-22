@@ -7,5 +7,25 @@
     "ordering": 0.3,
     "feasibility": 0.3
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "planning-basic-bugfix",
+      "input_data": "Plan a fix for a settings page where saving an empty display name incorrectly succeeds.",
+      "expected_output": "An ordered plan to reproduce the issue, add boundary validation, show a user-facing error, add regression tests, and verify the settings flow.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "planning-intermediate-api-version",
+      "input_data": "Plan a backward-compatible API migration from GET /users?active=true to GET /users?status=active for external clients.",
+      "expected_output": "A phased plan covering contract inventory, dual-parameter support, precedence and validation rules, client communication, telemetry, deprecation, and removal criteria.",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "planning-advanced-reliability",
+      "input_data": "Plan reliability work for a queue consumer that occasionally processes the same message twice after worker restarts.",
+      "expected_output": "A plan covering reproduction, idempotency keys, atomic state transitions, retry and dead-letter behavior, observability, failure tests, staged rollout, and rollback signals.",
+      "difficulty": "advanced"
+    }
+  ]
 }

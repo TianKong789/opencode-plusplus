@@ -7,5 +7,25 @@
     "reasoning": 0.3,
     "completeness": 0.2
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "reasoning-basic-syllogism",
+      "input_data": "All deployment approvals are reviewed. Some reviewed changes are urgent. Can it be concluded that some deployment approvals are urgent? Explain briefly.",
+      "expected_output": "No. The statements do not establish that the reviewed urgent changes overlap with deployment approvals.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "reasoning-intermediate-constraints",
+      "input_data": "Three jobs A, B, and C must run once. A must precede B, C cannot run first, and B must be last. List every valid execution order.",
+      "expected_output": "The only valid order is A, C, B.",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "reasoning-advanced-root-cause",
+      "input_data": "A service error rate rises immediately after a deploy. Rolling back removes the errors, while database latency and traffic remain unchanged. State the most supported cause and the next confirming action.",
+      "expected_output": "The deploy is the most supported cause; compare the deployed change or reproduce the failing request against the reverted and deployed versions.",
+      "difficulty": "advanced"
+    }
+  ]
 }

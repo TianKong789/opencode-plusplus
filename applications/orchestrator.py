@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
+from applications.services import ExperienceCapture
 from core.events import (
     EvaluationCompleted,
     ExperienceStored,
@@ -25,8 +26,6 @@ from core.models.reflection import Reflection
 from core.models.task import Task
 from core.models.workflow import Workflow
 from core.models.workflow_step import StepType, WorkflowStep
-from runtime.services import ExperienceCapture
-
 logger = logging.getLogger(__name__)
 
 

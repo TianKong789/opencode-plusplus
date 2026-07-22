@@ -70,9 +70,10 @@ def test_run_all_discovers_benchmarks_when_none_are_registered(
     # When: the capability is run without manual registration.
     evaluations = runner.run_all("python")
 
-    # Then: the discovered benchmark is evaluated.
+    # Then: discovery is reported without treating a benchmark definition as a pass.
     assert len(evaluations) == 1
-    assert evaluations[0].verdict is Verdict.PASS
+    assert evaluations[0].verdict is Verdict.PARTIAL
+    assert evaluations[0].score == 0.5
 
 
 def test_run_all_uses_registered_benchmarks_without_filesystem_discovery(
@@ -93,6 +94,7 @@ def test_run_all_uses_registered_benchmarks_without_filesystem_discovery(
     # When: the registered capability is run.
     evaluations = runner.run_all("python")
 
-    # Then: the existing registration behavior remains intact.
+    # Then: registration does not convert an unevaluated benchmark into a pass.
     assert len(evaluations) == 1
-    assert evaluations[0].verdict is Verdict.PASS
+    assert evaluations[0].verdict is Verdict.PARTIAL
+    assert evaluations[0].score == 0.5

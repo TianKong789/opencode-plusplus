@@ -98,7 +98,7 @@ Runtime (ephemeral)  →  Knowledge (derived)  →  Assets (persistent, versione
 | **Knowledge**| core/interfaces       | Runtime, Assets    |
 | **Assets**   | core/interfaces       | Runtime, Knowledge |
 
-**Rule:** All three layers depend only on `core/interfaces` (ports). No layer may import from another layer's implementation directory.
+**Rule:** Layers communicate through `core/interfaces` (ports) and may not import another layer's implementation directory. Implementations may import the `core` type definitions they operate on, such as domain models, IDs, events, and null objects. "Ports-only" constrains cross-layer communication, not use of shared core types required to implement a port.
 
 | Layer | Components | Port Contracts |
 |-------|-----------|----------------|
@@ -117,4 +117,3 @@ Assets persists        →  Skills, Experiences, Benchmarks, Prompts, Workflows
 ### Port Usage
 
 Each layer exposes interfaces in `core/interfaces/`. Implementations live in their respective layer directories. The DI container (`applications/container.py`) wires implementations to ports.
-

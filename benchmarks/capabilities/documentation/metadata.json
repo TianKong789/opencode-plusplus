@@ -7,5 +7,25 @@
     "completeness": 0.3,
     "accuracy": 0.3
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "documentation-basic-function",
+      "input_data": "Document a function retry_request(url, attempts=3) that retries failed HTTP requests and raises the final error.",
+      "expected_output": "Documentation that states the URL and attempt parameters, return value, retry behavior, and that the final request error is raised.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "documentation-intermediate-readme",
+      "input_data": "Write the essential README sections for a command-line tool that validates JSON files in CI.",
+      "expected_output": "A concise README covering purpose, installation, command examples, exit-code behavior, configuration, and contribution or support guidance.",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "documentation-advanced-migration",
+      "input_data": "Draft a migration guide for renaming a public configuration key from cache_ttl_seconds to cache_ttl while preserving a one-release deprecation period.",
+      "expected_output": "A migration guide with before-and-after examples, compatibility timing, deprecation warning behavior, rollout steps, and rollback guidance.",
+      "difficulty": "advanced"
+    }
+  ]
 }

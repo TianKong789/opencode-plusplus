@@ -7,5 +7,25 @@
     "soundness": 0.4,
     "scalability": 0.2
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "architecture-basic-boundary",
+      "input_data": "A CLI needs to store user preferences locally. Propose a minimal component boundary that keeps file I/O replaceable.",
+      "expected_output": "A preferences service depends on a repository port, with a local-file adapter implementing that port and the CLI depending on the service.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "architecture-intermediate-events",
+      "input_data": "Design a workflow completion notification path that lets email and audit logging evolve independently without coupling the workflow runner to either implementation.",
+      "expected_output": "The workflow runner publishes a WorkflowCompleted domain event through an event-bus port; email and audit subscribers consume the event independently.",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "architecture-advanced-multi-tenant",
+      "input_data": "Outline an architecture for a multi-tenant document API that requires tenant isolation, asynchronous indexing, and independently scalable reads.",
+      "expected_output": "Tenant-scoped authorization and storage keys, a durable indexing queue with workers, and a separately scalable read API backed by an index that enforces tenant filters.",
+      "difficulty": "advanced"
+    }
+  ]
 }

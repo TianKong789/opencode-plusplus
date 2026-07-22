@@ -6,6 +6,7 @@ from agents.executor import ExecutorAgent
 from agents.planner import PlannerAgent
 from agents.reflector import ReflectorAgent
 from applications.orchestrator import Orchestrator
+from applications.services import ExperienceCapture
 from configs.application import ApplicationConfig
 from configs.benchmark import BenchmarkConfig
 from configs.git import GitConfig
@@ -20,7 +21,6 @@ from memory.skill_repository import InMemorySkillRepository
 from runtime.event_bus import SyncEventBus
 from runtime.execution_engine import LocalExecutionEngine
 from runtime.git_manager import LocalGitManager
-from runtime.services import ExperienceCapture
 from runtime.workflow_runner import LocalWorkflowRunner
 from runtime.workspace_manager import LocalWorkspaceManager
 

@@ -7,5 +7,25 @@
     "efficient": 0.3,
     "readable": 0.2
   },
-  "difficulty_levels": ["basic", "intermediate", "advanced"]
+  "difficulty_levels": ["basic", "intermediate", "advanced"],
+  "tasks": [
+    {
+      "task_id": "sql-basic-filter",
+      "input_data": "For orders(id, customer_id, total, created_at), write a query returning id and total for orders with total greater than 100 placed during January 2026.",
+      "expected_output": "A parameter-free SQL query filtering total > 100 and created_at from 2026-01-01 inclusive to 2026-02-01 exclusive, selecting id and total.",
+      "difficulty": "basic"
+    },
+    {
+      "task_id": "sql-intermediate-aggregation",
+      "input_data": "For customers(id, name) and orders(id, customer_id, total), return every customer with their order count and total spend, including customers with no orders.",
+      "expected_output": "A LEFT JOIN grouped by customer that returns zero count and zero spend for customers without orders.",
+      "difficulty": "intermediate"
+    },
+    {
+      "task_id": "sql-advanced-ranking",
+      "input_data": "For sales(rep_id, region, amount, sold_at), return the top three sales representatives per region by total amount in 2025, preserving ties at third place.",
+      "expected_output": "A query that aggregates 2025 sales by region and rep, then uses RANK() partitioned by region and filters ranks less than or equal to three.",
+      "difficulty": "advanced"
+    }
+  ]
 }

@@ -86,14 +86,13 @@ class DefaultBenchmarkRunner(BenchmarkRunner):
         Returns:
             An evaluation with score and verdict.
         """
-        passed = bool(benchmark.input_data and benchmark.expected_output)
         return Evaluation(
             id=EvaluationId(f"bench-eval-{benchmark.id}"),
             execution_id=ExecutionId(f"bench-{uuid.uuid4().hex[:8]}"),
-            score=1.0 if passed else 0.0,
-            verdict=Verdict.PASS if passed else Verdict.FAIL,
-            criteria=(benchmark.name,),
-            summary=f"Benchmark {benchmark.name}: {'passed' if passed else 'failed'}",
+            score=0.5,
+            verdict=Verdict.PARTIAL,
+            criteria=("discovered", benchmark.name),
+            summary=f"Benchmark {benchmark.name}: discovered; awaiting capability evaluation",
         )
 
     def run_all(self, skill_id: str) -> tuple[Evaluation, ...]:
