@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.code_artifact import CodeArtifact
 from core.models.test_result import TestResult
 
 
-class Tester(ABC):
+@runtime_checkable
+class Tester(Protocol):
     """Runs tests on code artifacts."""
 
-    @abstractmethod
     def test(self, artifact: CodeArtifact) -> TestResult:
         """Run tests on a code artifact.
 
@@ -20,7 +20,6 @@ class Tester(ABC):
             Test results with pass/fail counts and verdict.
         """
 
-    @abstractmethod
     def get_result(self, result_id: str) -> TestResult | None:
         """Retrieve test results by their identifier.
 

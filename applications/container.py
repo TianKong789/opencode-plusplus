@@ -8,7 +8,7 @@ from agents.executor import ExecutorAgent
 from agents.planner import PlannerAgent
 from agents.reflector import ReflectorAgent
 from applications.orchestrator import Orchestrator
-from applications.services import ExperienceCapture
+from applications.services import ExperienceCapture, EvolutionPersistenceService
 from benchmarks.metrics import MetricsTracker
 from benchmarks.suite import BenchmarkSuite
 from configs.application import ApplicationConfig
@@ -101,7 +101,10 @@ class Container(containers.DeclarativeContainer):
         suite=benchmark_suite,
         evolver=skill_evolver,
         metrics=metrics_tracker,
-        experience_store=experience_store,
-        reflection_repository=reflection_repository,
-        skill_repository=skill_repository,
+        persistence=providers.Singleton(
+            EvolutionPersistenceService,
+            skill_repository=skill_repository,
+            reflection_repository=reflection_repository,
+            experience_store=experience_store,
+        ),
     )

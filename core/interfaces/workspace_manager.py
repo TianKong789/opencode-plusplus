@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.workspace import Workspace
 
 
-class WorkspaceManager(ABC):
+@runtime_checkable
+class WorkspaceManager(Protocol):
     """Creates, retrieves, and destroys workspace environments."""
 
-    @abstractmethod
     def create(self, name: str, root_path: str) -> Workspace:
         """Create a new workspace.
 
@@ -20,7 +20,6 @@ class WorkspaceManager(ABC):
             A new workspace with active=True.
         """
 
-    @abstractmethod
     def get(self, workspace_id: str) -> Workspace | None:
         """Retrieve a workspace by its identifier.
 
@@ -31,7 +30,6 @@ class WorkspaceManager(ABC):
             The workspace if found, None otherwise.
         """
 
-    @abstractmethod
     def list_active(self) -> tuple[Workspace, ...]:
         """Retrieve all active workspaces.
 
@@ -39,7 +37,6 @@ class WorkspaceManager(ABC):
             An immutable tuple of active workspaces.
         """
 
-    @abstractmethod
     def destroy(self, workspace_id: str) -> None:
         """Mark a workspace as inactive and release its resources.
 

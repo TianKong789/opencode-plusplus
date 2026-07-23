@@ -7,6 +7,7 @@ import pytest
 
 from core.ids import ModelId
 from core.models import ModelCapabilityProfile
+from core.models.routing import RoutingContext, filter_candidates
 from src.opencode.routing.policies import (
     BalancedPolicy,
     CloudPreferredPolicy,
@@ -14,7 +15,6 @@ from src.opencode.routing.policies import (
     LatencyPolicy,
     LocalOnlyPolicy,
     QualityPolicy,
-    RoutingContext,
     RoutingPolicy,
 )
 
@@ -102,7 +102,7 @@ def test_filter_candidates_removes_models_over_latency_limit_when_limited(
     fast = _make_profile("fast", latency=50.0)
     slow = _make_profile("slow", latency=250.0)
 
-    candidates = policy._filter_candidates(_context(fast, slow, max_latency_ms=100.0))
+    candidates = filter_candidates(_context(fast, slow, max_latency_ms=100.0))
 
     assert candidates == (fast,)
 
@@ -114,7 +114,7 @@ def test_filter_candidates_removes_models_over_cost_limit_when_limited(
     affordable = _make_profile("affordable", cost=0.002)
     expensive = _make_profile("expensive", cost=0.010)
 
-    candidates = policy._filter_candidates(_context(affordable, expensive, max_cost=0.005))
+    candidates = filter_candidates(_context(affordable, expensive, max_cost=0.005))
 
     assert candidates == (affordable,)
 
@@ -127,7 +127,7 @@ def test_filter_candidates_applies_both_constraints_when_both_are_set(
     slow = _make_profile("slow", latency=500.0, cost=0.002)
     expensive = _make_profile("expensive", latency=50.0, cost=0.020)
 
-    candidates = policy._filter_candidates(
+    candidates = filter_candidates(
         _context(eligible, slow, expensive, max_latency_ms=100.0, max_cost=0.005)
     )
 
@@ -141,7 +141,7 @@ def test_filter_candidates_preserves_all_models_when_no_constraints_are_set(
     first = _make_profile("first", latency=10.0, cost=0.001)
     second = _make_profile("second", latency=1_000.0, cost=0.050)
 
-    assert policy._filter_candidates(_context(first, second)) == (first, second)
+    assert filter_candidates(_context(first, second)) == (first, second)
 
 
 @pytest.mark.parametrize(

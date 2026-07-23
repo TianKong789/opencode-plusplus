@@ -9,6 +9,7 @@ from core.ids import EvaluationId, ExecutionId, ExperienceId, ReflectionId, Skil
 from core.models.evaluation import Evaluation, Verdict
 from core.models.experience import Experience
 from core.models.skill import Skill
+from applications.services import EvolutionPersistenceService
 from memory.experience_store import ExperienceStore
 from memory.reflection_repository import InMemoryReflectionRepository
 from memory.skill_repository import InMemorySkillRepository
@@ -60,13 +61,17 @@ class TestEvolutionEngine:
         experience_store = ExperienceStore()
         reflection_repository = InMemoryReflectionRepository()
         skill_repository = InMemorySkillRepository()
+        persistence = EvolutionPersistenceService(
+            skill_repository=skill_repository,
+            reflection_repository=reflection_repository,
+            experience_store=experience_store,
+        )
         engine = EvolutionEngine(
             loop=EvolutionLoop(max_iterations=3),
             suite=BenchmarkSuite(),
             evolver=SkillEvolver(),
             metrics=MetricsTracker(),
-            experience_store=experience_store,
-            reflection_repository=reflection_repository,
+            persistence=persistence,
             skill_repository=skill_repository,
         )
         skill = _make_skill()
@@ -75,9 +80,7 @@ class TestEvolutionEngine:
         evolved, evaluation, new_engine = engine.run_generation((skill,))
 
         assert skill_repository.get(skill.id) == evolved[0]
-        assert new_engine.experience_store is experience_store
-        assert new_engine.reflection_repository is reflection_repository
-        assert new_engine.skill_repository is skill_repository
+        assert new_engine.persistence is persistence
         experiences = experience_store.list_experiences()
         assert len(experiences) == 1
         assert experiences[0].confidence == evaluation.score
@@ -89,14 +92,17 @@ class TestEvolutionEngine:
         experience_store = ExperienceStore()
         reflection_repository = InMemoryReflectionRepository()
         skill_repository = InMemorySkillRepository()
+        persistence = EvolutionPersistenceService(
+            skill_repository=skill_repository,
+            reflection_repository=reflection_repository,
+            experience_store=experience_store,
+        )
         engine = EvolutionEngine(
             loop=EvolutionLoop(max_iterations=3),
             suite=BenchmarkSuite(),
             evolver=SkillEvolver(),
             metrics=MetricsTracker(),
-            experience_store=experience_store,
-            reflection_repository=reflection_repository,
-            skill_repository=skill_repository,
+            persistence=persistence,
         )
         skill = _make_skill()
         evaluation = Evaluation(

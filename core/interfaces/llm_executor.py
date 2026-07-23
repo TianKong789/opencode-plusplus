@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 
-class LLMExecutor(ABC):
+@runtime_checkable
+class LLMExecutor(Protocol):
     """Interface for executing LLM prompts.
 
     Implementations handle the actual API call to an LLM provider.
     """
 
-    @abstractmethod
     def execute(self, prompt: str) -> str:
         """Execute a prompt against the LLM.
 

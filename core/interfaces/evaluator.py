@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.evaluation import Evaluation
 from core.models.execution import Execution
 
 
-class Evaluator(ABC):
+@runtime_checkable
+class Evaluator(Protocol):
     """Assesses execution results against defined criteria."""
 
-    @abstractmethod
     def evaluate(self, execution: Execution) -> Evaluation:
         """Evaluate a completed execution.
 
@@ -20,7 +20,6 @@ class Evaluator(ABC):
             An evaluation with score and verdict.
         """
 
-    @abstractmethod
     def get_evaluation(self, evaluation_id: str) -> Evaluation | None:
         """Retrieve an evaluation by its identifier.
 

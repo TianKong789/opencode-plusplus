@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.reflection import Reflection
 
 
-class ReflectionRepository(ABC):
+@runtime_checkable
+class ReflectionRepository(Protocol):
     """Stores and queries reflection records."""
 
-    @abstractmethod
     def save(self, reflection: Reflection) -> None:
         """Persist a reflection, creating or updating as needed.
 
@@ -16,7 +16,6 @@ class ReflectionRepository(ABC):
             reflection: The reflection to save.
         """
 
-    @abstractmethod
     def get(self, reflection_id: str) -> Reflection | None:
         """Retrieve a reflection by its identifier.
 
@@ -27,7 +26,6 @@ class ReflectionRepository(ABC):
             The reflection if found, None otherwise.
         """
 
-    @abstractmethod
     def find_by_evaluation(self, evaluation_id: str) -> Reflection | None:
         """Look up a reflection by its source evaluation.
 
@@ -38,7 +36,6 @@ class ReflectionRepository(ABC):
             The first matching reflection, None if not found.
         """
 
-    @abstractmethod
     def list_all(self) -> tuple[Reflection, ...]:
         """Retrieve every stored reflection.
 
@@ -46,7 +43,6 @@ class ReflectionRepository(ABC):
             An immutable tuple of all reflections.
         """
 
-    @abstractmethod
     def search(self, query: str) -> tuple[Reflection, ...]:
         """Search reflections by keyword in insights, improvements, or root cause.
 
@@ -57,7 +53,6 @@ class ReflectionRepository(ABC):
             A tuple of matching reflections, ordered by relevance.
         """
 
-    @abstractmethod
     def delete(self, reflection_id: str) -> None:
         """Remove a reflection by its identifier.
 

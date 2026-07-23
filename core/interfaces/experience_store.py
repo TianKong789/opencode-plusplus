@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.experience import Experience
 
 
-class ExperienceStore(ABC):
+@runtime_checkable
+class ExperienceStore(Protocol):
     """Stores and retrieves accumulated experiences."""
 
-    @abstractmethod
     def store_experience(self, experience: Experience) -> None:
         """Persist an experience record.
 
@@ -16,7 +16,6 @@ class ExperienceStore(ABC):
             experience: The experience to store.
         """
 
-    @abstractmethod
     def get_experience(self, experience_id: str) -> Experience | None:
         """Retrieve an experience by its identifier.
 
@@ -27,7 +26,6 @@ class ExperienceStore(ABC):
             The experience if found, None otherwise.
         """
 
-    @abstractmethod
     def list_experiences(self) -> tuple[Experience, ...]:
         """Retrieve all stored experiences.
 

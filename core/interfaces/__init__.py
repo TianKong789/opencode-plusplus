@@ -6,6 +6,7 @@ from core.interfaces.capability_test import CapabilityTest
 from core.interfaces.coder import Coder
 from core.interfaces.evaluator import Evaluator
 from core.interfaces.event_bus import EventBus
+from core.interfaces.evolution_persistence import EvolutionPersistence
 from core.interfaces.experience_store import ExperienceStore
 from core.interfaces.execution_engine import ExecutionEngine
 from core.interfaces.executor import Executor
@@ -18,7 +19,7 @@ from core.interfaces.reflection_repository import ReflectionRepository
 from core.interfaces.reflector import Reflector
 from core.interfaces.researcher import Researcher
 from core.interfaces.reviewer import Reviewer
-from core.interfaces.routing_policy import RoutingContext, RoutingPolicy
+from core.interfaces.routing_policy import RoutingPolicy
 from core.interfaces.skill_extractor import SkillExtractor
 from core.interfaces.skill_repository import SkillRepository
 from core.interfaces.task_classifier import TaskClassifier
@@ -36,6 +37,7 @@ __all__ = [
     "Coder",
     "Evaluator",
     "EventBus",
+    "EvolutionPersistence",
     "ExperienceStore",
     "ExecutionEngine",
     "Executor",
@@ -48,7 +50,6 @@ __all__ = [
     "Reflector",
     "Researcher",
     "Reviewer",
-    "RoutingContext",
     "RoutingPolicy",
     "SkillExtractor",
     "SkillRepository",

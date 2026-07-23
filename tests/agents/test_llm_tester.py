@@ -1,7 +1,7 @@
 from agents.llm_tester import LLMTesterAgent
 from core.ids import ArtifactId, PlanId
 from core.models.code_artifact import CodeArtifact
-from core.stub_llm import StubLLMExecutor
+from tests.support.stub_llm import StubLLMExecutor
 
 
 def _make_artifact(art_id: str = "a1") -> CodeArtifact:

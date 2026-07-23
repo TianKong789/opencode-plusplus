@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.workspace import Workspace
 
 
-class GitManager(ABC):
+@runtime_checkable
+class GitManager(Protocol):
     """Performs git operations within workspace contexts."""
 
-    @abstractmethod
     def init(self, path: str, bare: bool = False) -> Workspace:
         """Initialize a new git repository.
 
@@ -24,7 +24,6 @@ class GitManager(ABC):
             RuntimeError: If the git command fails.
         """
 
-    @abstractmethod
     def initialize_if_needed(self, path: str) -> None:
         """Initialize a git repository if one does not already exist.
 
@@ -35,7 +34,6 @@ class GitManager(ABC):
             path: The directory in which to initialize the repository.
         """
 
-    @abstractmethod
     def clone(self, url: str, target_path: str) -> Workspace:
         """Clone a remote repository into a local path.
 
@@ -47,7 +45,6 @@ class GitManager(ABC):
             A workspace rooted at the cloned repository.
         """
 
-    @abstractmethod
     def branch(self, workspace: Workspace, name: str) -> str:
         """Create a new branch and return its name.
 
@@ -63,7 +60,6 @@ class GitManager(ABC):
             RuntimeError: If the git command fails.
         """
 
-    @abstractmethod
     def commit(self, workspace: Workspace, message: str) -> str:
         """Stage all changes and create a commit.
 
@@ -75,7 +71,6 @@ class GitManager(ABC):
             The created commit hash.
         """
 
-    @abstractmethod
     def diff(self, workspace: Workspace) -> str:
         """Get the unstaged diff for the workspace.
 
@@ -86,7 +81,6 @@ class GitManager(ABC):
             A unified diff string of all changes.
         """
 
-    @abstractmethod
     def status(self, workspace: Workspace) -> str:
         """Get the current git status.
 
@@ -97,7 +91,6 @@ class GitManager(ABC):
             The git status output string.
         """
 
-    @abstractmethod
     def push(self, workspace: Workspace, remote: str = "origin", branch: str | None = None) -> str:
         """Push commits to a remote repository.
 

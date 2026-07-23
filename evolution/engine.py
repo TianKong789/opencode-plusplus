@@ -3,15 +3,12 @@ from __future__ import annotations
 import uuid
 from dataclasses import dataclass, field
 
-from core.ids import EvaluationId, ExecutionId, ExperienceId, ReflectionId
+from core.ids import EvaluationId, ExecutionId
 from core.interfaces.benchmark_suite import BenchmarkSuitePort
-from core.interfaces.experience_store import ExperienceStore
+from core.interfaces.evolution_persistence import EvolutionPersistence
 from core.interfaces.metrics_tracker import MetricsTrackerPort
-from core.interfaces.reflection_repository import ReflectionRepository
 from core.interfaces.skill_repository import SkillRepository
 from core.models.evaluation import Evaluation, Verdict
-from core.models.experience import Experience
-from core.models.reflection import Reflection
 from core.models.skill import Skill
 from evolution.loop import EvolutionLoop
 from evolution.prompt_evolver import PromptEvolver
@@ -34,8 +31,7 @@ class EvolutionEngine:
     metrics: MetricsTrackerPort
     prompt_evolver: PromptEvolver | None = None
     skill_extractor: SkillExtractor | None = None
-    experience_store: ExperienceStore | None = None
-    reflection_repository: ReflectionRepository | None = None
+    persistence: EvolutionPersistence | None = None
     skill_repository: SkillRepository | None = None
     current_prompt: str = field(default="")
 
@@ -50,8 +46,7 @@ class EvolutionEngine:
             metrics=self.metrics,
             prompt_evolver=self.prompt_evolver,
             skill_extractor=self.skill_extractor,
-            experience_store=self.experience_store,
-            reflection_repository=self.reflection_repository,
+            persistence=self.persistence,
             skill_repository=self.skill_repository,
             current_prompt=self.current_prompt,
         )
@@ -65,8 +60,7 @@ class EvolutionEngine:
             metrics=metrics,
             prompt_evolver=self.prompt_evolver,
             skill_extractor=self.skill_extractor,
-            experience_store=self.experience_store,
-            reflection_repository=self.reflection_repository,
+            persistence=self.persistence,
             skill_repository=self.skill_repository,
             current_prompt=self.current_prompt,
         )
@@ -129,15 +123,9 @@ class EvolutionEngine:
         skills: tuple[Skill, ...],
         evaluation: Evaluation,
     ) -> None:
-        """Persist the evolved skills and evaluation outcome when repositories exist."""
-        from applications.services import EvolutionPersistenceService
-
-        service = EvolutionPersistenceService(
-            skill_repository=self.skill_repository,
-            reflection_repository=self.reflection_repository,
-            experience_store=self.experience_store,
-        )
-        service.persist(skills, evaluation)
+        """Persist the evolved skills and evaluation outcome when a persistence port is injected."""
+        if self.persistence is not None:
+            self.persistence.persist(skills, evaluation)
 
     # ── generation ─────────────────────────────────────────────────
 
@@ -190,8 +178,7 @@ class EvolutionEngine:
             metrics=metrics,
             prompt_evolver=engine.prompt_evolver,
             skill_extractor=engine.skill_extractor,
-            experience_store=engine.experience_store,
-            reflection_repository=engine.reflection_repository,
+            persistence=engine.persistence,
             skill_repository=engine.skill_repository,
             current_prompt=new_prompt,
         )

@@ -7,8 +7,9 @@ based on various optimization criteria.
 from __future__ import annotations
 
 from core.ids import ModelId
-from core.interfaces.routing_policy import RoutingContext, RoutingPolicy
+from core.interfaces.routing_policy import RoutingPolicy
 from core.models import ModelCapabilityProfile
+from core.models.routing import RoutingContext, filter_candidates
 
 
 class LatencyPolicy(RoutingPolicy):
@@ -27,7 +28,7 @@ class LatencyPolicy(RoutingPolicy):
         Returns:
             The model ID with lowest latency, or None.
         """
-        candidates = self._filter_candidates(context)
+        candidates = filter_candidates(context)
         if not candidates:
             return None
 
@@ -65,7 +66,7 @@ class QualityPolicy(RoutingPolicy):
         Returns:
             The model ID with highest quality, or None.
         """
-        candidates = self._filter_candidates(context)
+        candidates = filter_candidates(context)
         if not candidates:
             return None
 
@@ -146,7 +147,7 @@ class CloudPreferredPolicy(RoutingPolicy):
         Returns:
             The best model ID, preferring cloud providers.
         """
-        candidates = self._filter_candidates(context)
+        candidates = filter_candidates(context)
         if not candidates:
             return None
 
@@ -189,7 +190,7 @@ class CostOptimizedPolicy(RoutingPolicy):
         Returns:
             The most cost-effective model ID, or None.
         """
-        candidates = self._filter_candidates(context)
+        candidates = filter_candidates(context)
         if not candidates:
             return None
 
@@ -237,7 +238,7 @@ class BalancedPolicy(RoutingPolicy):
         Returns:
             The most balanced model ID, or None.
         """
-        candidates = self._filter_candidates(context)
+        candidates = filter_candidates(context)
         if not candidates:
             return None
 

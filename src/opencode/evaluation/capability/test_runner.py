@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
-@dataclass
+@dataclass(slots=True, frozen=True)
 class TaskDefinition:
     task_id: str
     input_data: str
@@ -15,7 +15,7 @@ class TaskDefinition:
     difficulty: str = "basic"
 
 
-@dataclass
+@dataclass(slots=True, frozen=True)
 class TaskResult:
     task_id: str
     output: str

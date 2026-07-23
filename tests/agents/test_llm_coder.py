@@ -1,7 +1,7 @@
 from agents.llm_coder import LLMCoderAgent
 from core.ids import PlanId, TaskId
 from core.models.plan import Plan, PlanStatus
-from core.stub_llm import StubLLMExecutor
+from tests.support.stub_llm import StubLLMExecutor
 
 
 def _make_plan(plan_id: str = "p1", task_id: str = "t1") -> Plan:

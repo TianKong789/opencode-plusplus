@@ -1,7 +1,7 @@
 from agents.llm_researcher import LLMResearcherAgent
 from core.ids import TaskId
 from core.models.task import Task, TaskStatus
-from core.stub_llm import StubLLMExecutor
+from tests.support.stub_llm import StubLLMExecutor
 
 
 def _make_task(task_id: str = "t1") -> Task:

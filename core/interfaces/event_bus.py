@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 from collections.abc import Callable
 
 from core.events.base import BaseEvent
 
 
-class EventBus(ABC):
+@runtime_checkable
+class EventBus(Protocol):
     """Publish-subscribe event bus for decoupled component communication.
 
     Implementations decide how events are dispatched: in-process,
     across threads, or over a network boundary.
     """
 
-    @abstractmethod
     def publish(self, event: BaseEvent) -> None:
         """Emit an event to all registered subscribers.
 
@@ -21,7 +21,6 @@ class EventBus(ABC):
             event: The domain event to publish.
         """
 
-    @abstractmethod
     def subscribe(self, event_type: type[BaseEvent], handler: Callable[[BaseEvent], None]) -> None:
         """Register a handler for a specific event type.
 

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.ids import ModelId
 
 
-class ModelRegistry(ABC):
+@runtime_checkable
+class ModelRegistry(Protocol):
     """Manages available models and their metadata.
 
     Provides a registry of LLMs known to the system, including
     their capabilities, costs, and operational status.
     """
 
-    @abstractmethod
     def register(
         self,
         model_id: ModelId,
@@ -29,7 +29,6 @@ class ModelRegistry(ABC):
             capabilities: Capability tags (e.g. "code", "reasoning", "vision").
         """
 
-    @abstractmethod
     def get(self, model_id: ModelId) -> dict[str, object] | None:
         """Retrieve model metadata by identifier.
 
@@ -40,7 +39,6 @@ class ModelRegistry(ABC):
             A dictionary of model metadata, or None if not found.
         """
 
-    @abstractmethod
     def list_models(self) -> tuple[ModelId, ...]:
         """List all registered model identifiers.
 
@@ -48,7 +46,6 @@ class ModelRegistry(ABC):
             A tuple of all registered model IDs.
         """
 
-    @abstractmethod
     def list_by_capability(self, capability: str) -> tuple[ModelId, ...]:
         """List models that have a specific capability.
 
@@ -59,7 +56,6 @@ class ModelRegistry(ABC):
             A tuple of model IDs with the specified capability.
         """
 
-    @abstractmethod
     def remove(self, model_id: ModelId) -> None:
         """Remove a model from the registry.
 
@@ -70,6 +66,5 @@ class ModelRegistry(ABC):
             KeyError: If the model ID does not exist.
         """
 
-    @abstractmethod
     def count(self) -> int:
         """Return the total number of registered models."""

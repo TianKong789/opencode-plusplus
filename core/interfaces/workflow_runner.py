@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.execution import Execution
 from core.models.workflow import Workflow
 from core.models.workspace import Workspace
 
 
-class WorkflowRunner(ABC):
+@runtime_checkable
+class WorkflowRunner(Protocol):
     """Executes workflows within workspace environments.
 
     The WorkflowRunner is the kernel of the Runtime layer.  It iterates
@@ -15,7 +16,6 @@ class WorkflowRunner(ABC):
     (ExecutionEngine for code steps, agents for agent steps, etc.).
     """
 
-    @abstractmethod
     def run(self, workflow: Workflow, workspace: Workspace) -> Execution:
         """Execute a workflow inside the given workspace.
 

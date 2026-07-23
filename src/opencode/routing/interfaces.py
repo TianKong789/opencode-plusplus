@@ -10,10 +10,10 @@ from src.opencode.routing.policies import (
     LatencyPolicy,
     LocalOnlyPolicy,
     QualityPolicy,
-    RoutingContext,
     RoutingPolicy,
 )
 from src.opencode.routing.router import ModelRouter
+from core.models.routing import RoutingContext
 
 __all__ = [
     "BalancedPolicy",

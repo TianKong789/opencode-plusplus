@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.evaluation import Evaluation
 
 
-class MetricsTrackerPort(ABC):
+@runtime_checkable
+class MetricsTrackerPort(Protocol):
     """Records evaluations and exposes aggregate scores."""
 
-    @abstractmethod
     def record(self, evaluation: Evaluation) -> MetricsTrackerPort:
         """Return a tracker that includes an evaluation.
 
@@ -19,6 +19,5 @@ class MetricsTrackerPort(ABC):
             A tracker containing the supplied evaluation.
         """
 
-    @abstractmethod
     def average_score(self) -> float:
         """Return the average score across recorded evaluations."""

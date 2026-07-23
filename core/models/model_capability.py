@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from core.models.capability import Capability
 
 
-@dataclass(frozen=True)
+@dataclass(slots=True, frozen=True)
 class Model:
     """Minimal model representation for capability assessment."""
 

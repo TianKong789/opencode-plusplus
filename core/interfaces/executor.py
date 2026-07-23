@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.execution import Execution
 from core.models.plan import Plan
 
 
-class Executor(ABC):
+@runtime_checkable
+class Executor(Protocol):
     """Runs plans and manages execution lifecycle."""
 
-    @abstractmethod
     def execute(self, plan: Plan) -> Execution:
         """Execute an approved plan.
 
@@ -20,7 +20,6 @@ class Executor(ABC):
             An execution record with QUEUED or RUNNING status.
         """
 
-    @abstractmethod
     def cancel(self, execution_id: str) -> Execution:
         """Cancel a running execution.
 
@@ -34,7 +33,6 @@ class Executor(ABC):
             KeyError: If no execution exists with the given id.
         """
 
-    @abstractmethod
     def get_status(self, execution_id: str) -> Execution | None:
         """Retrieve the current state of an execution.
 

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.evaluation import Evaluation
 from core.models.reflection import Reflection
 
 
-class Reflector(ABC):
+@runtime_checkable
+class Reflector(Protocol):
     """Analyzes evaluations to extract insights and improvement actions."""
 
-    @abstractmethod
     def reflect(self, evaluation: Evaluation) -> Reflection:
         """Generate a reflection from an evaluation.
 
@@ -20,7 +20,6 @@ class Reflector(ABC):
             A reflection containing insights and improvement steps.
         """
 
-    @abstractmethod
     def get_reflection(self, reflection_id: str) -> Reflection | None:
         """Retrieve a reflection by its identifier.
 

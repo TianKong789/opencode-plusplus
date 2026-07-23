@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.plan import Plan
 from core.models.task import Task
 
 
-class Planner(ABC):
+@runtime_checkable
+class Planner(Protocol):
     """Creates and manages execution plans for tasks."""
 
-    @abstractmethod
     def create_plan(self, task: Task) -> Plan:
         """Create a plan for the given task.
 
@@ -20,7 +20,6 @@ class Planner(ABC):
             A new plan with DRAFT status.
         """
 
-    @abstractmethod
     def approve_plan(self, plan: Plan) -> Plan:
         """Approve a draft plan, marking it ready for execution.
 
@@ -31,7 +30,6 @@ class Planner(ABC):
             The plan with APPROVED status.
         """
 
-    @abstractmethod
     def get_plan(self, plan_id: str) -> Plan | None:
         """Retrieve a plan by its identifier.
 

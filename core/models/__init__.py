@@ -23,6 +23,7 @@ from core.models.plan import Plan, PlanStatus
 from core.models.reflection import Reflection
 from core.models.research import Research
 from core.models.review import Review, ReviewVerdict
+from core.models.routing import RoutingContext
 from core.models.skill import Skill
 from core.models.task import Task, TaskStatus
 from core.models.test_result import TestResult, TestVerdict
@@ -56,6 +57,7 @@ __all__ = [
     "Research",
     "Review",
     "ReviewVerdict",
+    "RoutingContext",
     "Skill",
     "SkillId",
     "Task",

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models.research import Research
 from core.models.task import Task
 
 
-class Researcher(ABC):
+@runtime_checkable
+class Researcher(Protocol):
     """Gathers context and findings for tasks."""
 
-    @abstractmethod
     def research(self, task: Task) -> Research:
         """Research a task to gather relevant context.
 
@@ -20,7 +20,6 @@ class Researcher(ABC):
             Research findings and sources.
         """
 
-    @abstractmethod
     def get_research(self, research_id: str) -> Research | None:
         """Retrieve research by its identifier.
 

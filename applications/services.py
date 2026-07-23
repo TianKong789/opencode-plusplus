@@ -45,7 +45,10 @@ class ExperienceCapture:
 
 @dataclass(slots=True, frozen=True)
 class EvolutionPersistenceService:
-    """Persists evolution results (skills, reflections, experiences)."""
+    """Persists evolution results (skills, reflections, experiences).
+
+    Implements ``core.interfaces.evolution_persistence.EvolutionPersistence``.
+    """
 
     skill_repository: SkillRepository | None = None
     reflection_repository: ReflectionRepository | None = None

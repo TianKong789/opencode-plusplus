@@ -2,22 +2,20 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from core.models import Capability, CapabilityScore, Model
 
 
-class CapabilityTest(ABC):
+@runtime_checkable
+class CapabilityTest(Protocol):
     """Defines a test that evaluates one model capability."""
 
-    @abstractmethod
     def capability(self) -> Capability:
         """Return the capability this test evaluates."""
 
-    @abstractmethod
     def run(self, model: Model) -> CapabilityScore:
         """Execute the test against a model."""
 
-    @abstractmethod
     def load_tasks(self) -> tuple[dict[str, object], ...]:
         """Load test tasks for this capability."""

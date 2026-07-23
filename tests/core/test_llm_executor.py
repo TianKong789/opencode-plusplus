@@ -1,5 +1,5 @@
 from core.interfaces.llm_executor import LLMExecutor
-from core.stub_llm import StubLLMExecutor
+from tests.support.stub_llm import StubLLMExecutor
 
 
 class TestStubLLMExecutor:
