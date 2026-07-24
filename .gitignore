@@ -34,3 +34,6 @@ htmlcov/
 
 # Workspaces
 .workspaces/
+
+# OpenCode execution artifacts
+.omo/
