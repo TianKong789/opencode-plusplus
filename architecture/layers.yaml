@@ -1,0 +1,57 @@
+layers:
+  - name: runtime
+    paths:
+      - runtime
+      - src/opencode/adapter.py
+    modules:
+      - runtime
+      - src.opencode.adapter
+    may_depend_on:
+      - core
+
+  - name: knowledge
+    paths:
+      - agents
+      - evolution
+      - evaluation
+      - skills
+      - src/opencode/routing
+      - src/opencode/evaluation
+    modules:
+      - agents
+      - evolution
+      - evaluation
+      - skills
+      - src.opencode.routing
+      - src.opencode.evaluation
+    may_depend_on:
+      - core
+
+  - name: assets
+    paths:
+      - benchmarks
+      - memory
+      - prompts
+    modules:
+      - benchmarks
+      - memory
+      - prompts
+    may_depend_on:
+      - core
+
+  - name: applications
+    paths:
+      - applications
+      - configs
+    modules:
+      - applications
+      - configs
+    may_depend_on:
+      - agents
+      - benchmarks
+      - core
+      - evaluation
+      - evolution
+      - memory
+      - runtime
+      - skills

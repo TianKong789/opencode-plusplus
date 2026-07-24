@@ -10,8 +10,9 @@ from dataclasses import dataclass, field
 
 from core.ids import ModelId, TaskCategoryId
 from core.interfaces import CapabilityAssessor, ModelRegistry
-from core.interfaces.routing_policy import RoutingContext, RoutingPolicy
+from core.interfaces.routing_policy import RoutingPolicy
 from core.models import Capability, Model, ModelCapabilityProfile
+from core.models.routing import RoutingContext
 from core.models.task import Task
 from src.opencode.routing.policies import BalancedPolicy
 

@@ -7,24 +7,37 @@ Run with: pytest tests/test_architecture.py -v
 from __future__ import annotations
 
 import ast
-import sys
 from pathlib import Path
 
-import pytest
+from tests.architecture_layers import forbidden_modules, load_layers, package_paths
 
 # Project root
 ROOT = Path(__file__).resolve().parent.parent
 CORE = ROOT / "core"
 INTERFACES = CORE / "interfaces"
 EVENTS = CORE / "events"
-RUNTIME = ROOT / "runtime"
-KNOWLEDGE_DIRS = [ROOT / d for d in ("evolution", "memory", "skills", "evaluation")]
+LAYERS = load_layers(ROOT)
+RUNTIME_DIRS = list(LAYERS["runtime"].paths)
+KNOWLEDGE_DIRS = list(LAYERS["knowledge"].paths)
+ASSET_DIRS = list(LAYERS["assets"].paths)
+APPLICATION_DIRS = list(LAYERS["applications"].paths)
+LAYER_DIRS = RUNTIME_DIRS + KNOWLEDGE_DIRS + ASSET_DIRS
+IMPLEMENTATION_MODULES = tuple(
+    sorted(module for layer in LAYERS.values() for module in layer.modules)
+)
+RUNTIME_FORBIDDEN_MODULES = forbidden_modules(LAYERS, "runtime")
+KNOWLEDGE_FORBIDDEN_MODULES = forbidden_modules(LAYERS, "knowledge")
+ASSET_FORBIDDEN_MODULES = forbidden_modules(LAYERS, "assets")
+PACKAGE_PATHS = package_paths(ROOT)
+UNLAYERED_PACKAGE_PATHS = {CORE}
 
 
 def _python_files(directory: Path) -> list[Path]:
     """Return all .py files in a directory, excluding __pycache__."""
     if not directory.exists():
         return []
+    if directory.is_file():
+        return [directory] if directory.suffix == ".py" else []
     return [p for p in directory.rglob("*.py") if "__pycache__" not in str(p)]
 
 
@@ -50,6 +63,55 @@ def _imports_from(module_list: list[str], target: str) -> bool:
     return any(m == target or m.startswith(target + ".") for m in module_list)
 
 
+def _base_event_names(tree: ast.AST) -> set[str]:
+    names = {"BaseEvent"}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "core.events.base":
+            for alias in node.names:
+                if alias.name == "BaseEvent":
+                    names.add(alias.asname or alias.name)
+    return names
+
+
+def _inherits_base_event(node: ast.ClassDef, base_event_names: set[str]) -> bool:
+    for base in node.bases:
+        if isinstance(base, ast.Name) and base.id in base_event_names:
+            return True
+        if isinstance(base, ast.Attribute) and base.attr == "BaseEvent":
+            return True
+    return False
+
+
+class TestLayerConfig:
+    def test_required_layers_are_declared(self) -> None:
+        assert {"runtime", "knowledge", "assets", "applications"} <= set(LAYERS)
+
+    def test_layer_paths_exist(self) -> None:
+        missing = [
+            str(path.relative_to(ROOT))
+            for layer in LAYERS.values()
+            for path in layer.paths
+            if not path.exists()
+        ]
+        assert not missing, f"Layer config references missing paths: {missing}"
+
+    def test_layer_modules_are_unique(self) -> None:
+        modules = [module for layer in LAYERS.values() for module in layer.modules]
+        assert len(modules) == len(set(modules)), f"Duplicate layer modules: {modules}"
+
+    def test_first_party_implementation_files_belong_to_exactly_one_layer(self) -> None:
+        layer_paths = [path for layer in LAYERS.values() for path in layer.paths]
+        violations: list[str] = []
+        for package_path in PACKAGE_PATHS:
+            if package_path in UNLAYERED_PACKAGE_PATHS:
+                continue
+            for source_file in _python_files(package_path):
+                owners = [path for path in layer_paths if source_file == path or path in source_file.parents]
+                if len(owners) != 1:
+                    violations.append(str(source_file.relative_to(ROOT)))
+        assert not violations, f"Files must belong to exactly one architecture layer: {violations}"
+
+
 class TestDependencyDirection:
     """Enforce Runtime → Knowledge → Assets → core/interfaces dependency direction."""
 
@@ -65,10 +127,10 @@ class TestDependencyDirection:
         violations: list[str] = []
         for f in _python_files(CORE):
             imports = _parse_imports(f)
-            for mod in ("evolution", "memory", "skills", "evaluation"):
+            for mod in IMPLEMENTATION_MODULES:
                 if _imports_from(imports, mod):
                     violations.append(f"{f.relative_to(ROOT)} → {mod}")
-        assert not violations, f"core/ imports from Knowledge layer: {violations}"
+        assert not violations, f"core/ imports from implementation layers: {violations}"
 
     def test_core_does_not_import_from_applications(self) -> None:
         violations: list[str] = []
@@ -78,38 +140,35 @@ class TestDependencyDirection:
                 violations.append(str(f.relative_to(ROOT)))
         assert not violations, f"core/ imports from applications/: {violations}"
 
+    def test_runtime_does_not_import_from_knowledge_assets_or_applications(self) -> None:
+        violations: list[str] = []
+        for d in RUNTIME_DIRS:
+            for f in _python_files(d):
+                imports = _parse_imports(f)
+                for mod in RUNTIME_FORBIDDEN_MODULES:
+                    if _imports_from(imports, mod):
+                        violations.append(f"{f.relative_to(ROOT)} → {mod}")
+        assert not violations, f"Runtime layer imports forbidden modules: {violations}"
+
     def test_knowledge_does_not_import_from_runtime(self) -> None:
         violations: list[str] = []
         for d in KNOWLEDGE_DIRS:
             for f in _python_files(d):
                 imports = _parse_imports(f)
-                if _imports_from(imports, "runtime"):
-                    violations.append(str(f.relative_to(ROOT)))
-        assert not violations, f"Knowledge layer imports from runtime/: {violations}"
+                for mod in KNOWLEDGE_FORBIDDEN_MODULES:
+                    if _imports_from(imports, mod):
+                        violations.append(f"{f.relative_to(ROOT)} → {mod}")
+        assert not violations, f"Knowledge layer imports forbidden modules: {violations}"
 
-    def test_knowledge_does_not_import_from_applications(self) -> None:
+    def test_assets_do_not_import_from_runtime_knowledge_or_applications(self) -> None:
         violations: list[str] = []
-        for d in KNOWLEDGE_DIRS:
+        for d in ASSET_DIRS:
             for f in _python_files(d):
                 imports = _parse_imports(f)
-                if _imports_from(imports, "applications"):
-                    violations.append(str(f.relative_to(ROOT)))
-        assert not violations, f"Knowledge layer imports from applications/: {violations}"
-
-    def test_knowledge_does_not_import_from_core_interfaces(self) -> None:
-        """Knowledge may import from core/models/, core/events/, core/ids.py — but NOT core/interfaces/."""
-        violations: list[str] = []
-        for d in KNOWLEDGE_DIRS:
-            for f in _python_files(d):
-                imports = _parse_imports(f)
-                if _imports_from(imports, "core.interfaces"):
-                    violations.append(str(f.relative_to(ROOT)))
-        # Knowledge layer SHOULD import from core/interfaces (that's the ports rule)
-        # This test verifies Knowledge doesn't import from core/ implementations
-        # Actually, Knowledge CAN import from core/interfaces — that's the point of ports
-        # Let me re-check: the violation was Knowledge → Applications, not Knowledge → core/interfaces
-        # So this test should pass. Let me remove it since it's incorrect.
-        pytest.skip("Knowledge layer is allowed to import from core/interfaces (ports)")
+                for mod in ASSET_FORBIDDEN_MODULES:
+                    if _imports_from(imports, mod):
+                        violations.append(f"{f.relative_to(ROOT)} → {mod}")
+        assert not violations, f"Assets layer imports forbidden modules: {violations}"
 
 
 class TestPortsOnly:
@@ -143,20 +202,16 @@ class TestEventOwnership:
 
     def test_events_defined_only_in_core_events(self) -> None:
         violations: list[str] = []
-        for d in [ROOT / "runtime", ROOT / "applications"] + KNOWLEDGE_DIRS:
+        for d in APPLICATION_DIRS + LAYER_DIRS:
             for f in _python_files(d):
                 try:
                     tree = ast.parse(f.read_text())
                 except SyntaxError:
                     continue
+                base_event_names = _base_event_names(tree)
                 for node in ast.walk(tree):
-                    if isinstance(node, ast.ClassDef):
-                        # Check if class name contains "Event" and inherits from BaseEvent
-                        if "Event" in node.name:
-                            for base in node.bases:
-                                base_name = base.id if isinstance(base, ast.Name) else ""
-                                if base_name == "BaseEvent":
-                                    violations.append(f"{f.relative_to(ROOT)}:{node.lineno} class {node.name}")
+                    if isinstance(node, ast.ClassDef) and _inherits_base_event(node, base_event_names):
+                        violations.append(f"{f.relative_to(ROOT)}:{node.lineno} class {node.name}")
         assert not violations, f"Event classes outside core/events/: {violations}"
 
 
@@ -218,9 +273,6 @@ class TestNoBusinessLogicInCore:
             if f.name in exempted or "assets" in str(f) or "events" in str(f):
                 continue
             if "interfaces" in str(f) or "models" in str(f):
-                continue
-            # Skip providers (they're abstract factories, not implementations)
-            if "providers" in str(f):
                 continue
             # Check for classes that implement interfaces
             try:

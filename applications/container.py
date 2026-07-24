@@ -43,7 +43,6 @@ class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "core.providers",
             "applications.main",
         ],
     )

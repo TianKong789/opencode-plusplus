@@ -118,6 +118,8 @@ Assets persists        →  Skills, Experiences, Benchmarks, Prompts, Workflows
 
 Each layer exposes interfaces in `core/interfaces/`. Implementations live in their respective layer directories. The DI container (`applications/container.py`) wires implementations to ports.
 
+`applications/` and `configs/` are composition-root support, not a fourth domain layer. They may import concrete Runtime, Knowledge, and Assets implementations only to assemble the application graph and inject those implementations behind `core/interfaces` ports.
+
 ### Architecture Exceptions
 
 The following are exempt from the "depend only on core/interfaces" rule:

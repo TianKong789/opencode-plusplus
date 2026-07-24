@@ -53,17 +53,25 @@ Skill accumulation
 Benchmark-driven evolution
 Explainable decision making
 
-## Setup
+## Development Environment
 
-```bash
-pip install -e .
-```
+OpenCode++ uses a project-local Python virtual environment.
 
-## Development
+Create the environment:
 
-```bash
+python -m venv .venv
+
+Activate it:
+
+Linux / macOS
+
+source .venv/bin/activate
+
+Install the project:
+
 pip install -e ".[dev]"
-```
+
+All development tools (python, pip, pytest, ruff, mypy, etc.) should be run from this virtual environment.
 
 ## Current Status
 
